@@ -1,0 +1,387 @@
+/* MindCraft Island — Color Palette */
+:root {
+    --cream:   #FDF6EC;
+    --coral:   #E8543A;
+    --sky:     #5BB8D4;
+    --gold:    #F5C842;
+    --navy:    #1E2D40;
+    --green:   #6DBE6D;
+    --white:   #FFFFFF;
+    --gray:    #F0EBE3;
+    --border:  #DDD0C0;
+}
+
+/* ── Reset & base ────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--cream);
+    color: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a { color: var(--coral); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Nav ─────────────────────────────────────────────────── */
+.navbar {
+    background-color: var(--navy);
+    padding: 0.85rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.navbar .brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+}
+
+.navbar .brand span {
+    color: var(--coral);
+}
+
+.navbar nav a,
+.navbar nav button {
+    color: var(--cream);
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+    font-family: 'Nunito', sans-serif;
+}
+
+.navbar nav a:hover,
+.navbar nav button:hover {
+    background-color: rgba(255,255,255,0.12);
+    text-decoration: none;
+}
+
+.navbar nav .btn-logout {
+    background-color: var(--coral);
+    color: var(--white);
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+}
+
+.navbar nav .btn-logout:hover {
+    background-color: #c9432b;
+}
+
+/* ── Main layout ─────────────────────────────────────────── */
+main {
+    flex: 1;
+    padding: 2.5rem 1rem;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.container-wide {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 4px 24px rgba(30,45,64,0.09);
+    border: 1px solid var(--border);
+}
+
+/* ── Headings ────────────────────────────────────────────── */
+h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 1.5rem;
+}
+
+.page-subtitle {
+    color: var(--sky);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+/* ── Alerts ──────────────────────────────────────────────── */
+.alert {
+    padding: 0.85rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.alert-success {
+    background-color: #e6f7e6;
+    color: #2a6b2a;
+    border: 1.5px solid var(--green);
+}
+
+.alert-error {
+    background-color: #fdecea;
+    color: #8b1a1a;
+    border: 1.5px solid var(--coral);
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+.form-group {
+    margin-bottom: 1.35rem;
+}
+
+label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.label-tag {
+    display: inline-block;
+    background-color: var(--green);
+    color: var(--white);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    margin-left: 0.4rem;
+    letter-spacing: 0.3px;
+    vertical-align: middle;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+input[type="password"],
+input[type="number"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(91,184,212,0.18);
+    background: var(--white);
+}
+
+input.is-invalid {
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px rgba(232,84,58,0.12);
+}
+
+.error-msg {
+    color: var(--coral);
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 0.35rem;
+    display: block;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.3px;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+    background-color: var(--coral);
+    color: var(--white);
+    box-shadow: 0 3px 12px rgba(232,84,58,0.3);
+}
+
+.btn-primary:hover {
+    background-color: #c9432b;
+    box-shadow: 0 4px 16px rgba(232,84,58,0.4);
+    text-decoration: none;
+    color: var(--white);
+}
+
+.btn-secondary {
+    background-color: var(--sky);
+    color: var(--white);
+    box-shadow: 0 3px 12px rgba(91,184,212,0.3);
+}
+
+.btn-secondary:hover {
+    background-color: #4a9db8;
+    text-decoration: none;
+    color: var(--white);
+}
+
+.btn-block { width: 100%; text-align: center; }
+
+/* ── Table ───────────────────────────────────────────────── */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(30,45,64,0.08);
+    border: 1px solid var(--border);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    font-size: 0.9rem;
+}
+
+thead tr {
+    background-color: var(--navy);
+    color: var(--white);
+}
+
+thead th {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover { background-color: var(--gray); }
+
+tbody td {
+    padding: 0.85rem 1rem;
+    color: var(--navy);
+    vertical-align: middle;
+}
+
+.badge-count {
+    display: inline-block;
+    background-color: var(--gold);
+    color: var(--navy);
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-left: 0.5rem;
+}
+
+/* ── Dashboard stats bar ─────────────────────────────────── */
+.stats-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    border: 1.5px solid var(--border);
+    flex: 1;
+    min-width: 150px;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--coral);
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.15rem;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+footer {
+    text-align: center;
+    padding: 1.25rem;
+    font-size: 0.82rem;
+    color: #8a9ab0;
+    background: var(--navy);
+    color: rgba(255,255,255,0.45);
+}
+
+footer strong { color: var(--gold); }
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #8a9ab0;
+}
+
+.empty-state .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+    border: none;
+    border-top: 2px dashed var(--border);
+    margin: 1.75rem 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .navbar { flex-direction: column; gap: 0.5rem; padding: 1rem; }
+    .card { padding: 1.5rem 1rem; }
+    h1 { font-size: 1.5rem; }
+    .stats-bar { flex-direction: column; }
+    .btn { padding: 0.7rem 1.2rem; }
+}
