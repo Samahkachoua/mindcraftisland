@@ -1,24 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Login — MindCraft Island')
+@section('title', 'Admin Login — Mind Craft Island')
 
 @section('nav-links')
-    <a href="{{ route('register') }}">Public Form</a>
+<a href="{{ route('register') }}">Public Form</a>
 @endsection
 
 @section('content')
 <div class="container" style="max-width: 430px;">
 
     @if(session('error'))
-        <div class="alert alert-error">
-            <span>&#9888;</span>
-            <span>{{ session('error') }}</span>
-        </div>
+    <div class="alert alert-error">
+        <span>&#9888;</span>
+        <span>{{ session('error') }}</span>
+    </div>
     @endif
 
     <div class="card">
         <h1>Admin Login</h1>
-        <p class="page-subtitle">MindCraft Island — Staff Portal</p>
+        <p class="page-subtitle">Mind Craft Island — Staff Portal</p>
 
         <form method="POST" action="{{ route('admin.login.post') }}">
             @csrf
@@ -33,10 +33,9 @@
                     placeholder="admin"
                     class="{{ $errors->has('username') ? 'is-invalid' : '' }}"
                     autocomplete="username"
-                    required
-                >
+                    required>
                 @error('username')
-                    <span class="error-msg">{{ $message }}</span>
+                <span class="error-msg">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -49,10 +48,9 @@
                     placeholder="••••••••"
                     class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
                     autocomplete="current-password"
-                    required
-                >
+                    required>
                 @error('password')
-                    <span class="error-msg">{{ $message }}</span>
+                <span class="error-msg">{{ $message }}</span>
                 @enderror
             </div>
 
