@@ -34,13 +34,18 @@ class SupabaseService
 
     public function insertRegistration(array $data): array
     {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+
         $response = Http::withHeaders($this->headers(true))
             ->post("{$this->url}/rest/v1/registrations", $data);
 
         if ($response->failed()) {
-            throw new \RuntimeException(
-                'Supabase insert failed: ' . $response->body()
-            );
+            $body = $response->json() ?? [];
+            // PostgreSQL unique-constraint violation (composite key: full_name + phone_number)
+            if (($body['code'] ?? '') === '23505') {
+                throw new \RuntimeException('DUPLICATE_REGISTRATION');
+            }
+            throw new \RuntimeException('Supabase insert failed: ' . $response->body());
         }
 
         return $response->json() ?? [];

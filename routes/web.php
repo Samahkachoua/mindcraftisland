@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 // Public registration
 Route::get('/register', [RegistrationController::class, 'show'])->name('register');
 Route::post('/register', [RegistrationController::class, 'store'])->name('register.store');
+Route::get('/register/lang/{locale}', [RegistrationController::class, 'switchLang'])->name('register.lang');
 
 // Redirect root to register
 Route::get('/', fn() => redirect()->route('register'));

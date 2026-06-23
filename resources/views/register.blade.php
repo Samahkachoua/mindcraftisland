@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Register — Mind Craft Island')
+@section('title', __('register.page_title'))
 
 @section('nav-links')
-<a href="{{ route('admin.login') }}">Admin</a>
+<a href="{{ route('register.lang', __('register.switch_lang_locale')) }}" class="lang-switch-btn">
+    {{ __('register.switch_lang_label') }}
+</a>
 @endsection
 
 @section('content')
@@ -26,8 +28,8 @@
     @endif
 
     <div class="card">
-        <h1>Join Mind Craft Island</h1>
-        <p class="page-subtitle">Complete the form below to register for the program.</p>
+        <h1>{{ __('register.heading_prefix') }} <span class="text-primary">Mind Craft</span> <span class="text-secondary">Island</span></h1>
+        <p class="page-subtitle">{{ __('register.subtitle') }}</p>
 
         <hr class="divider">
 
@@ -36,15 +38,15 @@
 
             <div class="form-group">
                 <label for="full_name">
-                    Full Name
-                    <span class="label-tag">Required</span>
+                    {{ __('register.full_name') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
                 <input
                     type="text"
                     id="full_name"
                     name="full_name"
                     value="{{ old('full_name') }}"
-                    placeholder="e.g. Amira Hassan"
+                    placeholder="{{ __('register.full_name_ph') }}"
                     class="{{ $errors->has('full_name') ? 'is-invalid' : '' }}"
                     autocomplete="name">
                 @error('full_name')
@@ -54,15 +56,15 @@
 
             <div class="form-group">
                 <label for="phone_number">
-                    Phone Number
-                    <span class="label-tag">Required</span>
+                    {{ __('register.phone_number') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
                 <input
                     type="tel"
                     id="phone_number"
                     name="phone_number"
                     value="{{ old('phone_number') }}"
-                    placeholder="e.g. 03147852"
+                    placeholder="{{ __('register.phone_number_ph') }}"
                     class="{{ $errors->has('phone_number') ? 'is-invalid' : '' }}"
                     autocomplete="tel">
                 @error('phone_number')
@@ -71,33 +73,16 @@
             </div>
 
             <div class="form-group">
-                <label for="father_name">
-                    Father's Name
-                    <span class="label-tag">Required</span>
-                </label>
-                <input
-                    type="text"
-                    id="father_name"
-                    name="father_name"
-                    value="{{ old('father_name') }}"
-                    placeholder="e.g. Karim Hassan"
-                    class="{{ $errors->has('father_name') ? 'is-invalid' : '' }}">
-                @error('father_name')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="form-group">
                 <label for="mother_name">
-                    Mother's Name
-                    <span class="label-tag">Required</span>
+                    {{ __('register.mother_name') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
                 <input
                     type="text"
                     id="mother_name"
                     name="mother_name"
                     value="{{ old('mother_name') }}"
-                    placeholder="e.g. Fatima Benali"
+                    placeholder="{{ __('register.mother_name_ph') }}"
                     class="{{ $errors->has('mother_name') ? 'is-invalid' : '' }}">
                 @error('mother_name')
                 <span class="error-msg">{{ $message }}</span>
@@ -105,9 +90,26 @@
             </div>
 
             <div class="form-group">
+                <label for="father_name">
+                    {{ __('register.father_name') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
+                </label>
+                <input
+                    type="text"
+                    id="father_name"
+                    name="father_name"
+                    value="{{ old('father_name') }}"
+                    placeholder="{{ __('register.father_name_ph') }}"
+                    class="{{ $errors->has('father_name') ? 'is-invalid' : '' }}">
+                @error('father_name')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
                 <label for="date_of_birth">
-                    Date of Birth
-                    <span class="label-tag">Required</span>
+                    {{ __('register.date_of_birth') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
                 <input
                     type="date"
@@ -121,10 +123,26 @@
                 @enderror
             </div>
 
+            <div class="form-group">
+                <label for="medical_issues">
+                    {{ __('register.medical_issues') }}
+                </label>
+                <input
+                    type="text"
+                    id="medical_issues"
+                    name="medical_issues"
+                    value="{{ old('medical_issues') }}"
+                    placeholder="{{ __('register.medical_issues_ph') }}"
+                    class="{{ $errors->has('medical_issues') ? 'is-invalid' : '' }}">
+                @error('medical_issues')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+
             <hr class="divider">
 
             <button type="submit" class="btn btn-primary btn-block">
-                Submit Registration
+                {{ __('register.submit') }}
             </button>
         </form>
     </div>

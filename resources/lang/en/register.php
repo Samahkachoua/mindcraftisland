@@ -1,0 +1,40 @@
+<?php
+
+return [
+
+    // Page
+    'page_title'          => 'Register — Mind Craft Island',
+    'heading_prefix'      => 'Join',
+    'subtitle'            => 'Complete the form below to register for the program.',
+
+    // Field labels
+    'full_name'           => 'Full Name',
+    'phone_number'        => 'Phone Number',
+    'mother_name'         => "Mother's Name",
+    'father_name'         => "Father's Name",
+    'date_of_birth'       => 'Date of Birth',
+    'medical_issues'      => 'Medical Issues (if any)',
+
+    // Placeholders
+    'full_name_ph'        => 'e.g. Amira Hassan',
+    'phone_number_ph'     => 'e.g. 03147852',
+    'mother_name_ph'      => 'e.g. Fatima Benali',
+    'father_name_ph'      => 'e.g. Karim Hassan',
+    'medical_issues_ph'   => 'e.g. Allergies, Chronic Conditions',
+
+    // Tags
+    'required'            => 'Required',
+
+    // Button
+    'submit'              => 'Submit Registration',
+
+    // Flash messages
+    'success'             => "Registration submitted successfully! We'll be in touch.",
+    'error_duplicate'     => 'A registration with this name and phone number already exists.',
+    'error_generic'       => 'Could not save your registration. Please try again.',
+
+    // Language switcher
+    'switch_lang_label'   => 'العربية',
+    'switch_lang_locale'  => 'ar',
+
+];
