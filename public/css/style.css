@@ -199,11 +199,6 @@ input[type="number"] {
     outline: none;
 }
 
-input[type="date"] {
-    -webkit-appearance: none;
-    appearance: none;
-}
-
 input:focus {
     border-color: var(--sky);
     box-shadow: 0 0 0 3px rgba(91,184,212,0.18);
