@@ -111,13 +111,15 @@
                     {{ __('register.date_of_birth') }}
                     <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
-                <input
-                    type="date"
-                    id="date_of_birth"
-                    name="date_of_birth"
-                    value="{{ old('date_of_birth') }}"
-                    max="{{ date('Y-m-d', strtotime('-1 day')) }}"
-                    class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
+                <div class="date-input-wrapper">
+                    <input
+                        type="date"
+                        id="date_of_birth"
+                        name="date_of_birth"
+                        value="{{ old('date_of_birth') }}"
+                        max="{{ date('Y-m-d', strtotime('-1 day')) }}"
+                        class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
+                </div>
                 @error('date_of_birth')
                 <span class="error-msg">{{ $message }}</span>
                 @enderror

@@ -19,7 +19,7 @@ return [
     // Placeholders
     'full_name_ph'          => 'e.g. Amira Hassan',
     'phone_number_ph'       => 'e.g. 03147852',
-    'mother_name_ph'        => 'e.g. Fatima Benali',
+    'mother_name_ph'        => 'e.g. Fatima Saeed',
     'father_name_ph'        => 'e.g. Karim Hassan',
     'field_of_interests_ph' => 'e.g. Board Games, Reading, Football',
     'medical_issues_ph'     => 'e.g. Allergies, Chronic Conditions',

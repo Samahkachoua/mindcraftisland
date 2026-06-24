@@ -159,6 +159,13 @@ h2 {
     margin-bottom: 1.35rem;
 }
 
+.date-input-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
 label {
     display: block;
     font-weight: 700;
@@ -198,12 +205,6 @@ input[type="number"] {
     background: var(--cream);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
-}
-
-input[type="date"] {
-    -webkit-appearance: none;
-    appearance: none;
-    display: block;
 }
 
 input:focus {
