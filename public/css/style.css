@@ -161,9 +161,6 @@ h2 {
 
 .date-input-wrapper {
     width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    border-radius: 10px;
 }
 
 label {

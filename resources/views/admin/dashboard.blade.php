@@ -72,7 +72,7 @@
         <p style="margin-top: 0.4rem; color: #8a9ab0;"><a href="{{ route('admin.dashboard') }}">Clear search</a> to see all registrations.</p>
         @else
         <p style="font-weight: 700; font-size: 1.1rem;">No registrations yet.</p>
-        <p style="margin-top: 0.4rem; color: #8a9ab0;">Share the <a href="{{ route('register') }}">registration form</a> to get started.</p>
+        <p style="margin-top: 0.4rem; color: #8a9ab0;">Share the <a href="{{ route('register') }}">Registration Form</a> to get started.</p>
         @endif
     </div>
     @else

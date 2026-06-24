@@ -166,3 +166,23 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var dateInput = document.getElementById('date_of_birth');
+    if (!dateInput) return;
+    var wrapper = dateInput.parentElement;
+
+    function fixDateWidth() {
+        var w = wrapper.clientWidth;
+        dateInput.style.width = w + 'px';
+        dateInput.style.maxWidth = w + 'px';
+    }
+
+    fixDateWidth();
+    window.addEventListener('resize', fixDateWidth);
+    window.addEventListener('orientationchange', fixDateWidth);
+});
+</script>
+@endpush

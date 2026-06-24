@@ -39,6 +39,8 @@
         &copy; {{ date('Y') }} <strong>Mind Craft Island</strong>. All rights reserved.
     </footer>
 
+    @stack('scripts')
+
 </body>
 
 </html>
