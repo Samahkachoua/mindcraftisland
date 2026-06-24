@@ -116,8 +116,6 @@
                         type="date"
                         id="date_of_birth"
                         name="date_of_birth"
-                        placeholder="mm/dd/yyyy"
-                        value=""
                         max="{{ date('Y-m-d', strtotime('-1 day')) }}"
                         class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
                 </div>
@@ -170,20 +168,28 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var dateInput = document.getElementById('date_of_birth');
-        if (!dateInput) return;
-        var wrapper = dateInput.parentElement;
+document.addEventListener('DOMContentLoaded', function () {
+    var dateInput = document.getElementById('date_of_birth');
+    if (!dateInput) return;
 
-        function fixDateWidth() {
-            var w = wrapper.clientWidth;
-            dateInput.style.width = w + 'px';
-            dateInput.style.maxWidth = w + 'px';
+    var wrapper = dateInput.parentElement;
+    var refInput = document.getElementById('full_name');
+
+    function fixDateInput() {
+        var w = wrapper.clientWidth;
+        dateInput.style.width = w + 'px';
+        dateInput.style.maxWidth = w + 'px';
+
+        if (refInput) {
+            var h = refInput.getBoundingClientRect().height;
+            dateInput.style.height = h + 'px';
+            dateInput.style.minHeight = h + 'px';
         }
+    }
 
-        fixDateWidth();
-        window.addEventListener('resize', fixDateWidth);
-        window.addEventListener('orientationchange', fixDateWidth);
-    });
+    fixDateInput();
+    window.addEventListener('resize', fixDateInput);
+    window.addEventListener('orientationchange', fixDateInput);
+});
 </script>
 @endpush
