@@ -105,6 +105,7 @@ main {
     padding: 2.5rem 2rem;
     box-shadow: 0 4px 24px rgba(30,45,64,0.09);
     border: 1px solid var(--border);
+    overflow: hidden;
 }
 
 /* ── Headings ────────────────────────────────────────────── */
@@ -197,6 +198,12 @@ input[type="number"] {
     background: var(--cream);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
+}
+
+input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
 }
 
 input:focus {
