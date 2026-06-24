@@ -14,7 +14,10 @@
 /* ── Reset & base ────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; }
+html {
+    font-size: 16px;
+    overflow-x: hidden;
+}
 
 body {
     font-family: 'Nunito', sans-serif;
@@ -23,6 +26,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 a { color: var(--coral); text-decoration: none; }
@@ -187,6 +191,7 @@ input[type="date"],
 input[type="password"],
 input[type="number"] {
     width: 100%;
+    min-width: 0;
     padding: 0.75rem 1rem;
     border: 2px solid var(--border);
     border-radius: 10px;
@@ -196,6 +201,8 @@ input[type="number"] {
     background: var(--cream);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 input:focus {
