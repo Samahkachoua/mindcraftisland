@@ -116,7 +116,8 @@
                         type="date"
                         id="date_of_birth"
                         name="date_of_birth"
-                        value="mm/dd/yyyy"
+                        placeholder="mm/dd/yyyy"
+                        value=""
                         max="{{ date('Y-m-d', strtotime('-1 day')) }}"
                         class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
                 </div>
