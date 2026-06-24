@@ -11,16 +11,18 @@ return [
     'full_name'           => 'الاسم الكامل',
     'phone_number'        => 'رقم الهاتف',
     'mother_name'         => 'اسم الأم',
+    'field_of_interests'  => 'الحقول المهمة',
     'father_name'         => 'اسم الأب',
     'date_of_birth'       => 'تاريخ الميلاد',
     'medical_issues'      => 'المشاكل الصحية (إن وجدت)',
 
     // Placeholders
-    'full_name_ph'        => 'مثال: أميرة حسن',
-    'phone_number_ph'     => 'مثال: 03147852',
-    'mother_name_ph'      => 'مثال: فاطمة بن علي',
-    'father_name_ph'      => 'مثال: كريم حسن',
-    'medical_issues_ph'   => 'مثال: الحساسية، أمراض مزمنة',
+    'full_name_ph'          => 'مثال: أميرة حسن',
+    'phone_number_ph'       => 'مثال: 03147852',
+    'mother_name_ph'        => 'مثال: فاطمة سعيد ',
+    'field_of_interests_ph' => 'مثال: ألعاب الطاولة، القراءة، كرة القدم',
+    'father_name_ph'        => 'مثال: كريم حسن',
+    'medical_issues_ph'     => 'مثال: الحساسية، أمراض مزمنة',
 
     // Tags
     'required'            => 'مطلوب',

@@ -29,12 +29,13 @@ class RegistrationController extends Controller
         $this->applyLocale();
 
         $validated = $request->validate([
-            'full_name'      => 'required|string|max:255',
-            'phone_number'   => 'required|numeric|digits_between:7,15',
-            'father_name'    => 'required|string|max:255',
-            'mother_name'    => 'required|string|max:255',
-            'medical_issues' => 'nullable|string|max:350',
-            'date_of_birth'  => 'required|date|before:today',
+            'full_name'          => 'required|string|max:255',
+            'phone_number'       => 'required|numeric|digits_between:7,15',
+            'father_name'        => 'required|string|max:255',
+            'mother_name'        => 'required|string|max:255',
+            'medical_issues'     => 'nullable|string|max:350',
+            'field_of_interests' => 'nullable|string|max:350',
+            'date_of_birth'      => 'required|date|before:today',
         ]);
 
         try {

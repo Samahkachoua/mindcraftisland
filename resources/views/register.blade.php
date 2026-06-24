@@ -138,6 +138,21 @@
                 <span class="error-msg">{{ $message }}</span>
                 @enderror
             </div>
+            <div class="form-group">
+                <label for="field_of_interests">
+                    {{ __('register.field_of_interests') }}
+                </label>
+                <input
+                    type="text"
+                    id="field_of_interests"
+                    name="field_of_interests"
+                    value="{{ old('field_of_interests') }}"
+                    placeholder="{{ __('register.field_of_interests_ph') }}"
+                    class="{{ $errors->has('field_of_interests') ? 'is-invalid' : '' }}">
+                @error('field_of_interests')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
 
             <hr class="divider">
 

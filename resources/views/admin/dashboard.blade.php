@@ -52,8 +52,7 @@
                     class="search-input"
                     placeholder="Search by name or phone…"
                     value="{{ $search }}"
-                    autocomplete="off"
-                >
+                    autocomplete="off">
                 @if($search !== '')
                 <a href="{{ route('admin.dashboard', array_merge(request()->except(['search','page']), ['sort' => $sort, 'direction' => $direction])) }}" class="search-clear" title="Clear search">&#215;</a>
                 @endif
@@ -79,25 +78,24 @@
     @else
 
     @php
-        $cols = [
-            'full_name'   => 'Full Name',
-            'date_of_birth' => 'Age',
-            'created_at'  => 'Submitted At',
-        ];
-        $fixed = ['Phone Number', "Father's Name", "Mother's Name", 'Medical Issues'];
+    $cols = [
+    'full_name' => 'Full Name',
+    'date_of_birth' => 'Age',
+    'created_at' => 'Submitted At',
+    ];
+    $fixed = ['Phone Number', "Father's Name", "Mother's Name", 'Medical Issues','Field of Interests'];
 
-        $sortUrl = fn(string $col) =>
-            request()->fullUrlWithQuery([
-                'sort'      => $col,
-                'direction' => ($col === $sort && $direction === 'asc') ? 'desc' : 'asc',
-                'page'      => 1,
-            ]);
+    function sortUrl(string $col, string $currentSort, string $currentDir): string {
+    $newDir = ($col === $currentSort && $currentDir === 'asc') ? 'desc' : 'asc';
+    return request()->fullUrlWithQuery(['sort' => $col, 'direction' => $newDir, 'page' => 1]);
+    }
 
-        $sortIcon = fn(string $col) => $col !== $sort
-            ? '<span class="sort-icon">&#8597;</span>'
-            : ($direction === 'asc'
-                ? '<span class="sort-icon sort-active">&#8593;</span>'
-                : '<span class="sort-icon sort-active">&#8595;</span>');
+    function sortIcon(string $col, string $currentSort, string $currentDir): string {
+    if ($col !== $currentSort) return '<span class="sort-icon">&#8597;</span>';
+    return $currentDir === 'asc'
+    ? '<span class="sort-icon sort-active">&#8593;</span>'
+    : '<span class="sort-icon sort-active">&#8595;</span>';
+    }
     @endphp
 
     <div class="table-wrapper">
@@ -106,8 +104,8 @@
                 <tr>
                     @foreach($cols as $key => $label)
                     <th>
-                        <a href="{{ $sortUrl($key) }}" class="th-sort">
-                            {{ $label }}{!! $sortIcon($key) !!}
+                        <a href="{{ sortUrl($key, $sort, $direction) }}" class="th-sort">
+                            {{ $label }}{!! sortIcon($key, $sort, $direction) !!}
                         </a>
                     </th>
                     @endforeach
@@ -122,7 +120,7 @@
                     <td style="font-weight: 700;">{{ $reg['full_name'] ?? '—' }}</td>
                     <td>
                         @if(isset($reg['date_of_birth']))
-                        {{ \Carbon\Carbon::parse($reg['date_of_birth'])->age }} yrs
+                        {{ \Carbon\Carbon::parse($reg['date_of_birth'])->age }} years
                         @else —
                         @endif
                     </td>
@@ -136,6 +134,7 @@
                     <td>{{ $reg['father_name'] ?? '—' }}</td>
                     <td>{{ $reg['mother_name'] ?? '—' }}</td>
                     <td>{{ $reg['medical_issues'] ?? '—' }}</td>
+                    <td>{{ $reg['field_of_interests'] ?? '—' }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -159,45 +158,45 @@
 
             {{-- Page numbers --}}
             @php
-                $current  = $registrations->currentPage();
-                $last     = $registrations->lastPage();
-                $window   = 2;
-                $pages    = collect();
-                for ($i = max(1, $current - $window); $i <= min($last, $current + $window); $i++) {
-                    $pages->push($i);
+            $current = $registrations->currentPage();
+            $last = $registrations->lastPage();
+            $window = 2;
+            $pages = collect();
+            for ($i = max(1, $current - $window); $i <= min($last, $current + $window); $i++) {
+                $pages->push($i);
                 }
-                $showLeadingEllipsis  = $pages->first() > 2;
+                $showLeadingEllipsis = $pages->first() > 2;
                 $showTrailingEllipsis = $pages->last() < $last - 1;
-            @endphp
+                    @endphp
 
-            @if($pages->first() > 1)
-            <a href="{{ $registrations->url(1) }}" class="page-btn">1</a>
-            @endif
-            @if($showLeadingEllipsis)
-            <span class="page-btn disabled">&hellip;</span>
-            @endif
+                    @if($pages->first() > 1)
+                    <a href="{{ $registrations->url(1) }}" class="page-btn">1</a>
+                    @endif
+                    @if($showLeadingEllipsis)
+                    <span class="page-btn disabled">&hellip;</span>
+                    @endif
 
-            @foreach($pages as $p)
-            @if($p === $current)
-            <span class="page-btn active">{{ $p }}</span>
-            @else
-            <a href="{{ $registrations->url($p) }}" class="page-btn">{{ $p }}</a>
-            @endif
-            @endforeach
+                    @foreach($pages as $p)
+                    @if($p === $current)
+                    <span class="page-btn active">{{ $p }}</span>
+                    @else
+                    <a href="{{ $registrations->url($p) }}" class="page-btn">{{ $p }}</a>
+                    @endif
+                    @endforeach
 
-            @if($showTrailingEllipsis)
-            <span class="page-btn disabled">&hellip;</span>
-            @endif
-            @if($pages->last() < $last)
-            <a href="{{ $registrations->url($last) }}" class="page-btn">{{ $last }}</a>
-            @endif
+                    @if($showTrailingEllipsis)
+                    <span class="page-btn disabled">&hellip;</span>
+                    @endif
+                    @if($pages->last() < $last)
+                        <a href="{{ $registrations->url($last) }}" class="page-btn">{{ $last }}</a>
+                        @endif
 
-            {{-- Next --}}
-            @if($registrations->hasMorePages())
-            <a href="{{ $registrations->nextPageUrl() }}" class="page-btn">&#8594;</a>
-            @else
-            <span class="page-btn disabled">&#8594;</span>
-            @endif
+                        {{-- Next --}}
+                        @if($registrations->hasMorePages())
+                        <a href="{{ $registrations->nextPageUrl() }}" class="page-btn">&#8594;</a>
+                        @else
+                        <span class="page-btn disabled">&#8594;</span>
+                        @endif
         </div>
     </div>
     @else

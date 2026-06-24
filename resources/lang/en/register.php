@@ -12,15 +12,17 @@ return [
     'phone_number'        => 'Phone Number',
     'mother_name'         => "Mother's Name",
     'father_name'         => "Father's Name",
+    'field_of_interests'  => 'Fields of Interest',
     'date_of_birth'       => 'Date of Birth',
     'medical_issues'      => 'Medical Issues (if any)',
 
     // Placeholders
-    'full_name_ph'        => 'e.g. Amira Hassan',
-    'phone_number_ph'     => 'e.g. 03147852',
-    'mother_name_ph'      => 'e.g. Fatima Benali',
-    'father_name_ph'      => 'e.g. Karim Hassan',
-    'medical_issues_ph'   => 'e.g. Allergies, Chronic Conditions',
+    'full_name_ph'          => 'e.g. Amira Hassan',
+    'phone_number_ph'       => 'e.g. 03147852',
+    'mother_name_ph'        => 'e.g. Fatima Benali',
+    'father_name_ph'        => 'e.g. Karim Hassan',
+    'field_of_interests_ph' => 'e.g. Board Games, Reading, Football',
+    'medical_issues_ph'     => 'e.g. Allergies, Chronic Conditions',
 
     // Tags
     'required'            => 'Required',
