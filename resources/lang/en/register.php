@@ -30,6 +30,10 @@ return [
     // Button
     'submit'              => 'Submit Registration',
 
+    // Age validation
+    'dob_too_young'       => 'The child must be at least 8 years old.',
+    'dob_too_old'         => 'The child must be no older than 18 years old.',
+
     // Flash messages
     'success'             => "Registration submitted successfully! We'll be in touch.",
     'error_duplicate'     => 'A registration with this name and phone number already exists.',
