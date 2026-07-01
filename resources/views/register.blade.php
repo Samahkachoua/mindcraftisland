@@ -125,17 +125,17 @@
             </div>
 
             <div class="form-group">
-                <label for="medical_issues">
-                    {{ __('register.medical_issues') }}
+                <label for="medical_conditions">
+                    {{ __('register.medical_conditions') }}
                 </label>
                 <input
                     type="text"
-                    id="medical_issues"
-                    name="medical_issues"
-                    value="{{ old('medical_issues') }}"
-                    placeholder="{{ __('register.medical_issues_ph') }}"
-                    class="{{ $errors->has('medical_issues') ? 'is-invalid' : '' }}">
-                @error('medical_issues')
+                    id="medical_conditions"
+                    name="medical_conditions"
+                    value="{{ old('medical_conditions') }}"
+                    placeholder="{{ __('register.medical_conditions_ph') }}"
+                    class="{{ $errors->has('medical_conditions') ? 'is-invalid' : '' }}">
+                @error('medical_conditions')
                 <span class="error-msg">{{ $message }}</span>
                 @enderror
             </div>
@@ -168,28 +168,28 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var dateInput = document.getElementById('date_of_birth');
-    if (!dateInput) return;
+    document.addEventListener('DOMContentLoaded', function() {
+        var dateInput = document.getElementById('date_of_birth');
+        if (!dateInput) return;
 
-    var wrapper = dateInput.parentElement;
-    var refInput = document.getElementById('full_name');
+        var wrapper = dateInput.parentElement;
+        var refInput = document.getElementById('full_name');
 
-    function fixDateInput() {
-        var w = wrapper.clientWidth;
-        dateInput.style.width = w + 'px';
-        dateInput.style.maxWidth = w + 'px';
+        function fixDateInput() {
+            var w = wrapper.clientWidth;
+            dateInput.style.width = w + 'px';
+            dateInput.style.maxWidth = w + 'px';
 
-        if (refInput) {
-            var h = refInput.getBoundingClientRect().height;
-            dateInput.style.height = h + 'px';
-            dateInput.style.minHeight = h + 'px';
+            if (refInput) {
+                var h = refInput.getBoundingClientRect().height;
+                dateInput.style.height = h + 'px';
+                dateInput.style.minHeight = h + 'px';
+            }
         }
-    }
 
-    fixDateInput();
-    window.addEventListener('resize', fixDateInput);
-    window.addEventListener('orientationchange', fixDateInput);
-});
+        fixDateInput();
+        window.addEventListener('resize', fixDateInput);
+        window.addEventListener('orientationchange', fixDateInput);
+    });
 </script>
 @endpush

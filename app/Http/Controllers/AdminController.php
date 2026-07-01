@@ -62,7 +62,7 @@ class AdminController extends Controller
                     str_contains(mb_strtolower($r['phone_number'] ?? ''), $lower) ||
                     str_contains(mb_strtolower($r['father_name'] ?? ''), $lower) ||
                     str_contains(mb_strtolower($r['mother_name'] ?? ''), $lower) ||
-                    str_contains(mb_strtolower($r['medical_issues'] ?? ''), $lower) ||
+                    str_contains(mb_strtolower($r['medical_conditions'] ?? ''), $lower) ||
                     str_contains(mb_strtolower($r['field_of_interests'] ?? ''), $lower)
             );
         }

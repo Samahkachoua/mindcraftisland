@@ -14,7 +14,7 @@ return [
     'field_of_interests'  => 'الحقول المهمة',
     'father_name'         => 'اسم الأب',
     'date_of_birth'       => 'تاريخ الميلاد',
-    'medical_issues'      => 'المشاكل الصحية (إن وجدت)',
+    'medical_conditions'      => 'المشاكل الصحية (إن وجدت)',
 
     // Placeholders
     'full_name_ph'          => 'مثال: أميرة حسن',
@@ -22,7 +22,7 @@ return [
     'mother_name_ph'        => 'مثال: فاطمة سعيد ',
     'field_of_interests_ph' => 'مثال: ألعاب الطاولة، القراءة، كرة القدم',
     'father_name_ph'        => 'مثال: كريم حسن',
-    'medical_issues_ph'     => 'مثال: الحساسية، أمراض مزمنة',
+    'medical_conditions_ph'     => 'مثال: الحساسية، أمراض مزمنة',
 
     // Tags
     'required'            => 'مطلوب',

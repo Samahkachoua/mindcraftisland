@@ -14,7 +14,7 @@ return [
     'father_name'         => "Father's Name",
     'field_of_interests'  => 'Fields of Interest',
     'date_of_birth'       => 'Date of Birth',
-    'medical_issues'      => 'Medical Issues (if any)',
+    'medical_conditions'      => 'Medical Conditions (if any)',
 
     // Placeholders
     'full_name_ph'          => 'e.g. Amira Hassan',
@@ -22,7 +22,7 @@ return [
     'mother_name_ph'        => 'e.g. Fatima Saeed',
     'father_name_ph'        => 'e.g. Karim Hassan',
     'field_of_interests_ph' => 'e.g. Board Games, Reading, Football',
-    'medical_issues_ph'     => 'e.g. Allergies, Chronic Conditions',
+    'medical_conditions_ph'     => 'e.g. Allergies, Chronic Conditions',
 
     // Tags
     'required'            => 'Required',

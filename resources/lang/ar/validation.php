@@ -18,7 +18,7 @@ return [
         'mother_name'        => 'اسم الأم',
         'father_name'        => 'اسم الأب',
         'date_of_birth'      => 'تاريخ الميلاد',
-        'medical_issues'     => 'المشاكل الصحية',
+        'medical_conditions'     => 'المشاكل الصحية',
         'field_of_interests' => 'الحقول المهمة',
     ],
 
