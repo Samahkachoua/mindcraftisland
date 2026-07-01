@@ -29,12 +29,13 @@ class RegistrationController extends Controller
         $this->applyLocale();
 
         $validated = $request->validate([
-            'full_name'          => 'required|string|max:255',
-            'phone_number'       => 'required|numeric|digits_between:7,15',
-            'father_name'        => 'required|string|max:255',
-            'mother_name'        => 'required|string|max:255',
+            'full_name'                  => 'required|string|max:255',
+            'phone_number'               => 'required|numeric|digits_between:7,15',
+            'emergency_contact_number'   => 'required|numeric|digits_between:7,15',
+            'mother_name'                => 'required|string|max:255',
             'medical_conditions'     => 'nullable|string|max:350',
-            'field_of_interests' => 'nullable|string|max:350',
+            'field_of_interests'     => 'nullable|string|max:350',
+            'photo_video_consent'    => 'accepted',
             'date_of_birth'      => [
                 'required',
                 'date',
@@ -45,6 +46,8 @@ class RegistrationController extends Controller
             'date_of_birth.after_or_equal'  => __('register.dob_too_old'),
             'date_of_birth.before_or_equal' => __('register.dob_too_young'),
         ]);
+
+        $validated['photo_video_consent'] = 1;
 
         try {
             $this->supabase->insertRegistration($validated);

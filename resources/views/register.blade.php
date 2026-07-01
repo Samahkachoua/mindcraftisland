@@ -73,6 +73,24 @@
             </div>
 
             <div class="form-group">
+                <label for="emergency_contact_number">
+                    {{ __('register.emergency_contact_number') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
+                </label>
+                <input
+                    type="tel"
+                    id="emergency_contact_number"
+                    name="emergency_contact_number"
+                    value="{{ old('emergency_contact_number') }}"
+                    placeholder="{{ __('register.emergency_contact_number_ph') }}"
+                    class="{{ $errors->has('emergency_contact_number') ? 'is-invalid' : '' }}"
+                    autocomplete="tel">
+                @error('emergency_contact_number')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
                 <label for="mother_name">
                     {{ __('register.mother_name') }}
                     <span class="label-tag">{{ __('register.required') }}</span>
@@ -85,23 +103,6 @@
                     placeholder="{{ __('register.mother_name_ph') }}"
                     class="{{ $errors->has('mother_name') ? 'is-invalid' : '' }}">
                 @error('mother_name')
-                <span class="error-msg">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="father_name">
-                    {{ __('register.father_name') }}
-                    <span class="label-tag">{{ __('register.required') }}</span>
-                </label>
-                <input
-                    type="text"
-                    id="father_name"
-                    name="father_name"
-                    value="{{ old('father_name') }}"
-                    placeholder="{{ __('register.father_name_ph') }}"
-                    class="{{ $errors->has('father_name') ? 'is-invalid' : '' }}">
-                @error('father_name')
                 <span class="error-msg">{{ $message }}</span>
                 @enderror
             </div>
@@ -157,6 +158,20 @@
             </div>
 
             <hr class="divider">
+
+            <div class="form-group form-group-checkbox">
+                <label class="checkbox-label">
+                    <input
+                        type="checkbox"
+                        name="photo_video_consent"
+                        value="1"
+                        {{ old('photo_video_consent') ? 'checked' : '' }}>
+                    <span>{{ __('register.photo_video_consent') }}</span>
+                </label>
+                @error('photo_video_consent')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
 
             <button type="submit" class="btn btn-primary btn-block">
                 {{ __('register.submit') }}

@@ -13,13 +13,14 @@ return [
     'before'          => 'يجب أن يكون :attribute تاريخاً قبل :date.',
 
     'attributes'      => [
-        'full_name'          => 'الاسم الكامل',
-        'phone_number'       => 'رقم الهاتف',
-        'mother_name'        => 'اسم الأم',
-        'father_name'        => 'اسم الأب',
-        'date_of_birth'      => 'تاريخ الميلاد',
-        'medical_conditions'     => 'المشاكل الصحية',
-        'field_of_interests' => 'الحقول المهمة',
+        'full_name'                  => 'الاسم الكامل',
+        'phone_number'               => 'رقم الهاتف',
+        'emergency_contact_number'   => 'رقم جهة اتصال الطوارئ',
+        'mother_name'                => 'اسم الأم',
+        'date_of_birth'              => 'تاريخ الميلاد',
+        'medical_conditions'         => 'المشاكل الصحية',
+        'field_of_interests'         => 'الحقول المهمة',
+        'photo_video_consent'        => 'الموافقة على النشر',
     ],
 
 ];

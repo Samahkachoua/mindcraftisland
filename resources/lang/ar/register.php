@@ -8,24 +8,27 @@ return [
     'subtitle'            => 'أكمل النموذج أدناه للتسجيل في البرنامج.',
 
     // Field labels
-    'full_name'           => 'الاسم الكامل',
-    'phone_number'        => 'رقم الهاتف',
-    'mother_name'         => 'اسم الأم',
+    'full_name'                  => 'الاسم الثلاثي للمشارك',
+    'phone_number'               => 'رقم الهاتف',
+    'emergency_contact_number'   => 'رقم جهة اتصال الطوارئ',
+    'mother_name'                => 'اسم الأم',
     'field_of_interests'  => 'الحقول المهمة',
-    'father_name'         => 'اسم الأب',
     'date_of_birth'       => 'تاريخ الميلاد',
     'medical_conditions'      => 'المشاكل الصحية (إن وجدت)',
 
     // Placeholders
-    'full_name_ph'          => 'مثال: أميرة حسن',
-    'phone_number_ph'       => 'مثال: 03147852',
-    'mother_name_ph'        => 'مثال: فاطمة سعيد ',
+    'full_name_ph'                    => 'مثال: أميرة كريم حسن',
+    'phone_number_ph'                 => 'مثال: 03147852',
+    'emergency_contact_number_ph'     => 'مثال: 03147852',
+    'mother_name_ph'                  => 'مثال: فاطمة سعيد ',
     'field_of_interests_ph' => 'مثال: ألعاب الطاولة، القراءة، كرة القدم',
-    'father_name_ph'        => 'مثال: كريم حسن',
     'medical_conditions_ph'     => 'مثال: الحساسية، أمراض مزمنة',
 
     // Tags
     'required'            => 'مطلوب',
+
+    // Consent
+    'photo_video_consent' => 'أوافق على مشاركة صور ومقاطع فيديو طفلي على وسائل التواصل الاجتماعي.',
 
     // Button
     'submit'              => 'إرسال التسجيل',

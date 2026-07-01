@@ -83,7 +83,7 @@
     'date_of_birth' => 'Age',
     'created_at' => 'Submitted At',
     ];
-    $fixed = ['Phone Number', "Father's Name", "Mother's Name", 'Medical Conditions','Field of Interests'];
+    $fixed = ['Phone Number', 'Emergency Contact', "Mother's Name", 'Medical Conditions', 'Field of Interests', 'Photo Consent'];
 
     function sortUrl(string $col, string $currentSort, string $currentDir): string {
     $newDir = ($col === $currentSort && $currentDir === 'asc') ? 'desc' : 'asc';
@@ -131,10 +131,11 @@
                         @endif
                     </td>
                     <td>{{ $reg['phone_number'] ?? '—' }}</td>
-                    <td>{{ $reg['father_name'] ?? '—' }}</td>
+                    <td>{{ $reg['emergency_contact_number'] ?? '—' }}</td>
                     <td>{{ $reg['mother_name'] ?? '—' }}</td>
                     <td>{{ $reg['medical_conditions'] ?? '—' }}</td>
                     <td>{{ $reg['field_of_interests'] ?? '—' }}</td>
+                    <td>{{ !empty($reg['photo_video_consent']) ? '✓' : '✗' }}</td>
                 </tr>
                 @endforeach
             </tbody>
