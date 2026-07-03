@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Events\RegistrationCreated;
-use App\Mail\AdminRegistrationConfirmation;
 use App\Mail\AdminRegistrationNotification;
 use App\Services\SupabaseService;
 use Illuminate\Support\Facades\Event;
@@ -32,7 +31,7 @@ class RegistrationEmailTest extends TestCase
         });
     }
 
-    public function test_both_emails_are_queued_on_successful_registration(): void
+    public function test_admin_notification_is_queued_on_successful_registration(): void
     {
         Mail::fake();
         $this->mockSupabase();
@@ -42,13 +41,9 @@ class RegistrationEmailTest extends TestCase
         Mail::assertQueued(AdminRegistrationNotification::class, function ($mail) {
             return $mail->data['full_name'] === 'Amira Karim Hassan';
         });
-
-        Mail::assertQueued(AdminRegistrationConfirmation::class, function ($mail) {
-            return $mail->data['full_name'] === 'Amira Karim Hassan';
-        });
     }
 
-    public function test_admin_notification_email_is_queued_with_correct_data(): void
+    public function test_admin_notification_contains_correct_registration_data(): void
     {
         Mail::fake();
         $this->mockSupabase([['id' => 'abc-123', 'full_name' => 'Amira Karim Hassan']]);
@@ -62,32 +57,7 @@ class RegistrationEmailTest extends TestCase
         });
     }
 
-    public function test_confirmation_email_uses_english_locale_by_default(): void
-    {
-        Mail::fake();
-        $this->mockSupabase();
-
-        $this->post(route('register.store'), $this->validPayload);
-
-        Mail::assertQueued(AdminRegistrationConfirmation::class, function ($mail) {
-            return $mail->locale === 'en';
-        });
-    }
-
-    public function test_confirmation_email_uses_arabic_locale_when_session_set(): void
-    {
-        Mail::fake();
-        $this->mockSupabase();
-
-        $this->withSession(['register_locale' => 'ar'])
-             ->post(route('register.store'), $this->validPayload);
-
-        Mail::assertQueued(AdminRegistrationConfirmation::class, function ($mail) {
-            return $mail->locale === 'ar';
-        });
-    }
-
-    public function test_no_emails_queued_when_registration_is_duplicate(): void
+    public function test_no_email_queued_when_registration_is_duplicate(): void
     {
         Mail::fake();
 
