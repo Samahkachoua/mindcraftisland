@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RegistrationCreated;
 use App\Services\SupabaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -50,7 +51,8 @@ class RegistrationController extends Controller
         $validated['photo_video_consent'] = 1;
 
         try {
-            $this->supabase->insertRegistration($validated);
+            $record = $this->supabase->insertRegistration($validated);
+            RegistrationCreated::dispatch($validated, session('register_locale', 'en'), $record);
             return redirect()->route('register')->with('success', __('register.success'));
         } catch (\RuntimeException $e) {
             if ($e->getMessage() === 'DUPLICATE_REGISTRATION') {
