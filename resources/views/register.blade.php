@@ -117,7 +117,6 @@
                         type="date"
                         id="date_of_birth"
                         name="date_of_birth"
-                        min="{{ now()->subYears(18)->format('Y-m-d') }}"
                         max="{{ now()->subYears(8)->format('Y-m-d') }}"
                         class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
                 </div>

@@ -40,11 +40,9 @@ class RegistrationController extends Controller
             'date_of_birth'      => [
                 'required',
                 'date',
-                'after_or_equal:' . now()->subYears(18)->format('Y-m-d'),
                 'before_or_equal:' . now()->subYears(8)->format('Y-m-d'),
             ],
         ], [
-            'date_of_birth.after_or_equal'  => __('register.dob_too_old'),
             'date_of_birth.before_or_equal' => __('register.dob_too_young'),
         ]);
 
