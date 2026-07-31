@@ -8,7 +8,7 @@ return [
     'subtitle'            => 'أكمل النموذج أدناه للتسجيل في البرنامج.',
 
     // Field labels
-    'full_name'                  => 'الاسم الثلاثي للمشارك',
+    'full_name'                  => 'الاسم الثلاثي',
     'phone_number'               => 'رقم الهاتف',
     'emergency_contact_number'   => 'رقم جهة اتصال الطوارئ',
     'mother_name'                => 'اسم الأم',
@@ -44,5 +44,21 @@ return [
     // Language switcher
     'switch_lang_label'   => 'English',
     'switch_lang_locale'  => 'en',
+
+    // Registration type
+    'registration_type_heading' => 'من الذي تقوم بتسجيله؟',
+    'registration_type_child'   => 'تسجيل الطفل (8–18 سنة)',
+    'registration_type_lady'    => 'تسجيل برنامج السيدات (18 سنة فما فوق)',
+
+    // Lady-flow field label overrides
+    'full_name_lady'            => 'الاسم الثلاثي',
+    'phone_number_lady'         => 'رقم التواصل الخاص بك',
+
+    // Consent (lady flow)
+    'photo_video_consent_lady'  => 'أوافق على مشاركة صوري ومقاطع الفيديو الخاصة بي على وسائل التواصل الاجتماعي.',
+
+    // Age validation
+    'dob_child_too_old'         => 'يجب ألا يتجاوز عمر الطفل 18 سنة.',
+    'dob_lady_min'              => 'يجب أن يكون عمر المشاركة 18 سنة على الأقل.',
 
 ];

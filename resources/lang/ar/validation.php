@@ -13,7 +13,7 @@ return [
     'before'          => 'يجب أن يكون :attribute تاريخاً قبل :date.',
 
     'attributes'      => [
-        'full_name'                  => 'الاسم الكامل',
+        'full_name'                  => 'الاسم الثلاثي',
         'phone_number'               => 'رقم الهاتف',
         'emergency_contact_number'   => 'رقم جهة اتصال الطوارئ',
         'mother_name'                => 'اسم الأم',

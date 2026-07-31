@@ -40,23 +40,35 @@
             <div class="stat-value" style="color: var(--green);">{{ $weekCount }}</div>
             <div class="stat-label">This Week</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: var(--coral);">{{ $childCount }}</div>
+            <div class="stat-label">Total Children</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: var(--gold);">{{ $ladyCount }}</div>
+            <div class="stat-label">Total Ladies</div>
+        </div>
     </div>
 
     {{-- Search --}}
     <div class="search-bar">
-        <form method="GET" action="{{ route('admin.dashboard') }}" style="display:contents;">
+        <form method="GET" action="{{ route('admin.dashboard') }}" id="dashboard-search-form" style="display:contents;">
             <div class="search-input-wrap">
                 <input
                     type="text"
                     name="search"
+                    id="dashboard-search-input"
                     class="search-input"
                     placeholder="Search by name or phone…"
                     value="{{ $search }}"
                     autocomplete="off">
-                @if($search !== '')
-                <a href="{{ route('admin.dashboard', array_merge(request()->except(['search','page']), ['sort' => $sort, 'direction' => $direction])) }}" class="search-clear" title="Clear search">&#215;</a>
-                @endif
+                <a href="{{ route('admin.dashboard') }}" class="search-clear" id="dashboard-search-clear" title="Clear search" style="display: {{ $search !== '' ? 'inline' : 'none' }};">&#215;</a>
             </div>
+            <select name="type" class="search-input" style="max-width: 160px;">
+                <option value="" {{ $type === '' ? 'selected' : '' }}>All Types</option>
+                <option value="child" {{ $type === 'child' ? 'selected' : '' }}>Child</option>
+                <option value="lady" {{ $type === 'lady' ? 'selected' : '' }}>Lady</option>
+            </select>
             <input type="hidden" name="sort" value="{{ $sort }}">
             <input type="hidden" name="direction" value="{{ $direction }}">
             <button type="submit" class="btn btn-secondary" style="padding: 0.62rem 1.25rem; font-size: 0.92rem;">Search</button>
@@ -64,150 +76,69 @@
     </div>
 
     {{-- Table --}}
-    @if($registrations->total() === 0)
-    <div class="card empty-state">
-        <div class="empty-icon">&#128203;</div>
-        @if($search !== '')
-        <p style="font-weight: 700; font-size: 1.1rem;">No results for "{{ $search }}".</p>
-        <p style="margin-top: 0.4rem; color: #8a9ab0;"><a href="{{ route('admin.dashboard') }}">Clear search</a> to see all registrations.</p>
-        @else
-        <p style="font-weight: 700; font-size: 1.1rem;">No registrations yet.</p>
-        <p style="margin-top: 0.4rem; color: #8a9ab0;">Share the <a href="{{ route('register') }}">Registration Form</a> to get started.</p>
-        @endif
+    <div id="results-panel">
+        @include('admin.partials.results')
     </div>
-    @else
-
-    @php
-    $cols = [
-    'full_name' => 'Full Name',
-    'date_of_birth' => 'Age',
-    'created_at' => 'Submitted At',
-    ];
-    $fixed = ['Phone Number', 'Emergency Contact', "Mother's Name", 'Medical Conditions', 'Field of Interests', 'Photo Consent'];
-
-    function sortUrl(string $col, string $currentSort, string $currentDir): string {
-    $newDir = ($col === $currentSort && $currentDir === 'asc') ? 'desc' : 'asc';
-    return request()->fullUrlWithQuery(['sort' => $col, 'direction' => $newDir, 'page' => 1]);
-    }
-
-    function sortIcon(string $col, string $currentSort, string $currentDir): string {
-    if ($col !== $currentSort) return '<span class="sort-icon">&#8597;</span>';
-    return $currentDir === 'asc'
-    ? '<span class="sort-icon sort-active">&#8593;</span>'
-    : '<span class="sort-icon sort-active">&#8595;</span>';
-    }
-    @endphp
-
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    @foreach($cols as $key => $label)
-                    <th>
-                        <a href="{{ sortUrl($key, $sort, $direction) }}" class="th-sort">
-                            {{ $label }}{!! sortIcon($key, $sort, $direction) !!}
-                        </a>
-                    </th>
-                    @endforeach
-                    @foreach($fixed as $label)
-                    <th>{{ $label }}</th>
-                    @endforeach
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($registrations as $reg)
-                <tr>
-                    <td style="font-weight: 700;">{{ $reg['full_name'] ?? '—' }}</td>
-                    <td>
-                        @if(isset($reg['date_of_birth']))
-                        {{ \Carbon\Carbon::parse($reg['date_of_birth'])->age }} years
-                        @else —
-                        @endif
-                    </td>
-                    <td style="color: #8a9ab0; font-size: 0.83rem;">
-                        @if(isset($reg['created_at']))
-                        {{ \Carbon\Carbon::parse($reg['created_at'])->format('d M Y, H:i') }}
-                        @else —
-                        @endif
-                    </td>
-                    <td>{{ $reg['phone_number'] ?? '—' }}</td>
-                    <td>{{ $reg['emergency_contact_number'] ?? '—' }}</td>
-                    <td>{{ $reg['mother_name'] ?? '—' }}</td>
-                    <td>{{ $reg['medical_conditions'] ?? '—' }}</td>
-                    <td>{{ $reg['field_of_interests'] ?? '—' }}</td>
-                    <td>{{ !empty($reg['photo_video_consent']) ? '✓' : '✗' }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-    {{-- Pagination --}}
-    @if($registrations->lastPage() > 1)
-    <div class="pagination-bar">
-        <div class="page-info">
-            Showing {{ $registrations->firstItem() }}–{{ $registrations->lastItem() }} of {{ $registrations->total() }} registrations
-            @if($search !== '') <span class="badge-filtered">(filtered)</span> @endif
-        </div>
-        <div class="page-buttons">
-            {{-- Prev --}}
-            @if($registrations->onFirstPage())
-            <span class="page-btn disabled">&#8592;</span>
-            @else
-            <a href="{{ $registrations->previousPageUrl() }}" class="page-btn">&#8592;</a>
-            @endif
-
-            {{-- Page numbers --}}
-            @php
-            $current = $registrations->currentPage();
-            $last = $registrations->lastPage();
-            $window = 2;
-            $pages = collect();
-            for ($i = max(1, $current - $window); $i <= min($last, $current + $window); $i++) {
-                $pages->push($i);
-                }
-                $showLeadingEllipsis = $pages->first() > 2;
-                $showTrailingEllipsis = $pages->last() < $last - 1;
-                    @endphp
-
-                    @if($pages->first() > 1)
-                    <a href="{{ $registrations->url(1) }}" class="page-btn">1</a>
-                    @endif
-                    @if($showLeadingEllipsis)
-                    <span class="page-btn disabled">&hellip;</span>
-                    @endif
-
-                    @foreach($pages as $p)
-                    @if($p === $current)
-                    <span class="page-btn active">{{ $p }}</span>
-                    @else
-                    <a href="{{ $registrations->url($p) }}" class="page-btn">{{ $p }}</a>
-                    @endif
-                    @endforeach
-
-                    @if($showTrailingEllipsis)
-                    <span class="page-btn disabled">&hellip;</span>
-                    @endif
-                    @if($pages->last() < $last)
-                        <a href="{{ $registrations->url($last) }}" class="page-btn">{{ $last }}</a>
-                        @endif
-
-                        {{-- Next --}}
-                        @if($registrations->hasMorePages())
-                        <a href="{{ $registrations->nextPageUrl() }}" class="page-btn">&#8594;</a>
-                        @else
-                        <span class="page-btn disabled">&#8594;</span>
-                        @endif
-        </div>
-    </div>
-    @else
-    <div class="page-info" style="margin-top: 1rem;">
-        Showing all {{ $registrations->total() }} registration{{ $registrations->total() !== 1 ? 's' : '' }}
-        @if($search !== '') <span class="badge-filtered">(filtered)</span> @endif
-    </div>
-    @endif
-
-    @endif
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var panel = document.getElementById('results-panel');
+        var form = document.getElementById('dashboard-search-form');
+        var searchInput = document.getElementById('dashboard-search-input');
+        var typeSelect = form.querySelector('select[name="type"]');
+        var sortField = form.querySelector('input[name="sort"]');
+        var directionField = form.querySelector('input[name="direction"]');
+        var clearBtn = document.getElementById('dashboard-search-clear');
+        var dashboardUrl = '{{ route('admin.dashboard') }}';
+
+        function syncFormFromUrl(url) {
+            var params = new URL(url, window.location.origin).searchParams;
+            searchInput.value = params.get('search') || '';
+            typeSelect.value = params.get('type') || '';
+            sortField.value = params.get('sort') || sortField.value;
+            directionField.value = params.get('direction') || directionField.value;
+            clearBtn.style.display = searchInput.value.trim() !== '' ? 'inline' : 'none';
+        }
+
+        function loadUrl(url) {
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function (res) { return res.text(); })
+                .then(function (html) {
+                    panel.innerHTML = html;
+                    syncFormFromUrl(url);
+                    window.history.replaceState(null, '', dashboardUrl);
+                });
+        }
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var params = new URLSearchParams(new FormData(form));
+                params.set('page', '1');
+                loadUrl(dashboardUrl + '?' + params.toString());
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                searchInput.value = '';
+                var params = new URLSearchParams(new FormData(form));
+                params.set('page', '1');
+                loadUrl(dashboardUrl + '?' + params.toString());
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            var link = e.target.closest('a.ajax-nav');
+            if (!link || !panel.contains(link)) return;
+            e.preventDefault();
+            loadUrl(link.href);
+        });
+    });
+</script>
+@endpush

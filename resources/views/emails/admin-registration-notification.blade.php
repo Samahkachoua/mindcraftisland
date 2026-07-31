@@ -51,13 +51,21 @@
                      style="border-collapse:collapse;border:1px solid #DDD0C0;border-radius:8px;overflow:hidden;">
                 <tr style="background-color:#FDF6EC;">
                   <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;width:42%;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
-                    Child's Full Name
+                    Registration Type
+                  </td>
+                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-weight:700;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
+                    {{ ($data['registration_type'] ?? 'child') === 'lady' ? 'Ladies Program' : 'Child' }}
+                  </td>
+                </tr>
+                <tr style="background-color:#FFFFFF;">
+                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;width:42%;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
+                    {{ ($data['registration_type'] ?? 'child') === 'lady' ? 'Full Name' : "Child's Full Name" }}
                   </td>
                   <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-weight:700;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     {{ $data['full_name'] }}
                   </td>
                 </tr>
-                <tr style="background-color:#FFFFFF;">
+                <tr style="background-color:#FDF6EC;">
                   <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     Date of Birth
                   </td>
@@ -68,7 +76,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr style="background-color:#FDF6EC;">
+                <tr style="background-color:#FFFFFF;">
                   <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     Fields of Interest
                   </td>
@@ -76,7 +84,7 @@
                     {{ $data['field_of_interests'] ?: '—' }}
                   </td>
                 </tr>
-                <tr style="background-color:#FFFFFF;">
+                <tr style="background-color:#FDF6EC;">
                   <td style="padding:12px 16px;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     Medical Conditions
                   </td>
@@ -102,28 +110,32 @@
                      style="border-collapse:collapse;border:1px solid #DDD0C0;border-radius:8px;overflow:hidden;">
                 <tr style="background-color:#FDF6EC;">
                   <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;width:42%;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
-                    Mother's Name
-                  </td>
-                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-weight:600;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
-                    {{ $data['mother_name'] }}
-                  </td>
-                </tr>
-                <tr style="background-color:#FFFFFF;">
-                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     Phone Number
                   </td>
-                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
+                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-weight:700;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     {{ $data['phone_number'] }}
                   </td>
                 </tr>
+                @if(($data['registration_type'] ?? 'child') !== 'lady')
+                <tr style="background-color:#FFFFFF;">
+                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
+                    Mother's Name
+                  </td>
+                  <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-weight:600;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
+                    {{ $data['mother_name'] ?? '—' }}
+                  </td>
+                </tr>
+                @endif
+                @if(($data['registration_type'] ?? 'child') !== 'lady')
                 <tr style="background-color:#FDF6EC;">
                   <td style="padding:12px 16px;color:#888;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
                     Emergency Contact
                   </td>
                   <td style="padding:12px 16px;color:#1E2D40;font-size:15px;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
-                    {{ $data['emergency_contact_number'] }}
+                    {{ $data['emergency_contact_number'] ?? '—' }}
                   </td>
                 </tr>
+                @endif
               </table>
             </td>
           </tr>

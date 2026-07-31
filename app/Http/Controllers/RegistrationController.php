@@ -29,24 +29,33 @@ class RegistrationController extends Controller
     {
         $this->applyLocale();
 
+        $registrationType = $request->input('registration_type');
+        $isLady = $registrationType === 'lady';
+
+        $dobRules = ['required', 'date'];
+        if ($isLady) {
+            $dobRules[] = 'before_or_equal:' . now()->subYears(18)->format('Y-m-d');
+        } else {
+            $dobRules[] = 'before_or_equal:' . now()->subYears(8)->format('Y-m-d');
+            $dobRules[] = 'after_or_equal:' . now()->subYears(18)->format('Y-m-d');
+        }
+
         $validated = $request->validate([
+            'registration_type'          => 'required|in:child,lady',
             'full_name'                  => 'required|string|max:255',
             'phone_number'               => 'required|numeric|digits_between:7,15',
-            'emergency_contact_number'   => 'required|numeric|digits_between:7,15',
-            'mother_name'                => 'required|string|max:255',
+            'emergency_contact_number'   => 'required_if:registration_type,child|nullable|numeric|digits_between:7,15',
+            'mother_name'                => 'required_if:registration_type,child|nullable|string|max:255',
             'medical_conditions'     => 'nullable|string|max:350',
             'field_of_interests'     => 'nullable|string|max:350',
-            'photo_video_consent'    => 'accepted',
-            'date_of_birth'      => [
-                'required',
-                'date',
-                'before_or_equal:' . now()->subYears(8)->format('Y-m-d'),
-            ],
+            'photo_video_consent'    => 'nullable|boolean',
+            'date_of_birth'      => $dobRules,
         ], [
-            'date_of_birth.before_or_equal' => __('register.dob_too_young'),
+            'date_of_birth.before_or_equal' => $isLady ? __('register.dob_lady_min') : __('register.dob_too_young'),
+            'date_of_birth.after_or_equal'  => __('register.dob_child_too_old'),
         ]);
 
-        $validated['photo_video_consent'] = 1;
+        $validated['photo_video_consent'] = $request->boolean('photo_video_consent') ? 1 : 0;
 
         try {
             $record = $this->supabase->insertRegistration($validated);

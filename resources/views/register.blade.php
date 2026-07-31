@@ -28,7 +28,7 @@
     @endif
 
     <div class="card">
-        <h1>{{ __('register.heading_prefix') }} <span class="text-primary">Mind Craft</span> <span class="text-secondary">Island</span></h1>
+        <h1>{{ __('register.heading_prefix') }} <span class="text-secondary">Mind Craft</span> <span class="text-primary">Island</span></h1>
         <p class="page-subtitle">{{ __('register.subtitle') }}</p>
 
         <hr class="divider">
@@ -37,8 +37,36 @@
             @csrf
 
             <div class="form-group">
+                <label>
+                    {{ __('register.registration_type_heading') }}
+                    <span class="label-tag">{{ __('register.required') }}</span>
+                </label>
+                <div class="radio-card-group">
+                    <label class="radio-card">
+                        <input
+                            type="radio"
+                            name="registration_type"
+                            value="child"
+                            {{ old('registration_type', 'child') === 'child' ? 'checked' : '' }}>
+                        <span class="radio-card-text">{{ __('register.registration_type_child') }}</span>
+                    </label>
+                    <label class="radio-card">
+                        <input
+                            type="radio"
+                            name="registration_type"
+                            value="lady"
+                            {{ old('registration_type') === 'lady' ? 'checked' : '' }}>
+                        <span class="radio-card-text">{{ __('register.registration_type_lady') }}</span>
+                    </label>
+                </div>
+                @error('registration_type')
+                <span class="error-msg">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
                 <label for="full_name">
-                    {{ __('register.full_name') }}
+                    <span id="full_name-label-text" data-child-text="{{ __('register.full_name') }}" data-lady-text="{{ __('register.full_name_lady') }}">{{ __('register.full_name') }}</span>
                     <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
                 <input
@@ -56,7 +84,7 @@
 
             <div class="form-group">
                 <label for="phone_number">
-                    {{ __('register.phone_number') }}
+                    <span id="phone_number-label-text" data-child-text="{{ __('register.phone_number') }}" data-lady-text="{{ __('register.phone_number_lady') }}">{{ __('register.phone_number') }}</span>
                     <span class="label-tag">{{ __('register.required') }}</span>
                 </label>
                 <input
@@ -72,7 +100,7 @@
                 @enderror
             </div>
 
-            <div class="form-group">
+            <div class="form-group" data-flow="child">
                 <label for="emergency_contact_number">
                     {{ __('register.emergency_contact_number') }}
                     <span class="label-tag">{{ __('register.required') }}</span>
@@ -90,7 +118,7 @@
                 @enderror
             </div>
 
-            <div class="form-group">
+            <div class="form-group" data-flow="child">
                 <label for="mother_name">
                     {{ __('register.mother_name') }}
                     <span class="label-tag">{{ __('register.required') }}</span>
@@ -117,7 +145,11 @@
                         type="date"
                         id="date_of_birth"
                         name="date_of_birth"
+                        data-child-max="{{ now()->subYears(8)->format('Y-m-d') }}"
+                        data-child-min="{{ now()->subYears(18)->format('Y-m-d') }}"
+                        data-lady-max="{{ now()->subYears(18)->format('Y-m-d') }}"
                         max="{{ now()->subYears(8)->format('Y-m-d') }}"
+                        min="{{ now()->subYears(18)->format('Y-m-d') }}"
                         class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
                 </div>
                 @error('date_of_birth')
@@ -165,7 +197,7 @@
                         name="photo_video_consent"
                         value="1"
                         {{ old('photo_video_consent') ? 'checked' : '' }}>
-                    <span>{{ __('register.photo_video_consent') }}</span>
+                    <span id="photo_video_consent-label-text" data-child-text="{{ __('register.photo_video_consent') }}" data-lady-text="{{ __('register.photo_video_consent_lady') }}">{{ __('register.photo_video_consent') }}</span>
                 </label>
                 @error('photo_video_consent')
                 <span class="error-msg">{{ $message }}</span>
@@ -205,6 +237,45 @@
         fixDateInput();
         window.addEventListener('resize', fixDateInput);
         window.addEventListener('orientationchange', fixDateInput);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var typeRadios = document.querySelectorAll('input[name="registration_type"]');
+        if (!typeRadios.length) return;
+
+        var childOnlyFields = document.querySelectorAll('[data-flow="child"]');
+        var swappableLabels = document.querySelectorAll('[data-child-text][data-lady-text]');
+        var dob = document.getElementById('date_of_birth');
+
+        function applyFlow(type) {
+            childOnlyFields.forEach(function(el) {
+                el.style.display = (type === 'lady') ? 'none' : '';
+            });
+
+            swappableLabels.forEach(function(el) {
+                el.textContent = (type === 'lady') ? el.dataset.ladyText : el.dataset.childText;
+            });
+
+            if (dob) {
+                if (type === 'lady') {
+                    dob.max = dob.dataset.ladyMax;
+                    dob.removeAttribute('min');
+                } else {
+                    dob.max = dob.dataset.childMax;
+                    dob.min = dob.dataset.childMin;
+                }
+            }
+        }
+
+        typeRadios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                applyFlow(this.value);
+            });
+        });
+
+        var checked = document.querySelector('input[name="registration_type"]:checked');
+        applyFlow(checked ? checked.value : 'child');
     });
 </script>
 @endpush

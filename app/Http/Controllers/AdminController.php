@@ -51,6 +51,14 @@ class AdminController extends Controller
 
         $todayCount = $collection->filter(fn($r) => isset($r['created_at']) && \Carbon\Carbon::parse($r['created_at'])->isToday())->count();
         $weekCount  = $collection->filter(fn($r) => isset($r['created_at']) && \Carbon\Carbon::parse($r['created_at'])->isCurrentWeek())->count();
+        $childCount = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') !== 'lady')->count();
+        $ladyCount  = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === 'lady')->count();
+
+        // Filter by registration type
+        $type = $request->input('type', '');
+        if (in_array($type, ['child', 'lady'], true)) {
+            $collection = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === $type);
+        }
 
         // Search
         $search = trim($request->input('search', ''));
@@ -68,7 +76,7 @@ class AdminController extends Controller
         }
 
         // Sort
-        $allowedSorts = ['full_name', 'date_of_birth', 'created_at'];
+        $allowedSorts = ['full_name', 'date_of_birth', 'created_at', 'registration_type'];
         $sort      = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
         $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
 
@@ -90,15 +98,24 @@ class AdminController extends Controller
             ['path' => $request->url()]
         ))->appends($request->except('page'));
 
-        return view('admin.dashboard', [
+        $viewData = [
             'registrations' => $paginator,
             'total'         => $total,
             'todayCount'    => $todayCount,
             'weekCount'     => $weekCount,
+            'childCount'    => $childCount,
+            'ladyCount'     => $ladyCount,
             'search'        => $search,
             'sort'          => $sort,
             'direction'     => $direction,
-        ]);
+            'type'          => $type,
+        ];
+
+        if ($request->ajax()) {
+            return view('admin.partials.results', $viewData);
+        }
+
+        return view('admin.dashboard', $viewData);
     }
 
     public function logout(Request $request)

@@ -8,7 +8,7 @@ return [
     'subtitle'            => 'Complete the form below to register for the program.',
 
     // Field labels
-    'full_name'                  => "Child's Full Name",
+    'full_name'                  => "Full Name",
     'phone_number'               => 'Phone Number',
     'emergency_contact_number'   => 'Emergency Contact Number',
     'mother_name'                => "Mother's Name",
@@ -44,5 +44,21 @@ return [
     // Language switcher
     'switch_lang_label'   => 'العربية',
     'switch_lang_locale'  => 'ar',
+
+    // Registration type
+    'registration_type_heading' => 'Who are you registering?',
+    'registration_type_child'   => 'Child Registration (8–18)',
+    'registration_type_lady'    => 'Ladies Program Registration (18+)',
+
+    // Lady-flow field label overrides
+    'full_name_lady'            => 'Full Name',
+    'phone_number_lady'         => 'Your Contact Number',
+
+    // Consent (lady flow)
+    'photo_video_consent_lady'  => 'I accept that my photos and videos may be shared on social media.',
+
+    // Age validation
+    'dob_child_too_old'         => 'The child must be no older than 18 years old.',
+    'dob_lady_min'              => 'The participant must be at least 18 years old.',
 
 ];

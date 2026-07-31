@@ -12,6 +12,7 @@ use Tests\TestCase;
 class RegistrationEmailTest extends TestCase
 {
     private array $validPayload = [
+        'registration_type'        => 'child',
         'full_name'                => 'Amira Karim Hassan',
         'phone_number'             => '03147852',
         'emergency_contact_number' => '03258963',
