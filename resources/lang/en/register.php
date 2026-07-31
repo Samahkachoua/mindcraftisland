@@ -52,7 +52,7 @@ return [
 
     // Lady-flow field label overrides
     'full_name_lady'            => 'Full Name',
-    'phone_number_lady'         => 'Your Contact Number',
+    'phone_number_lady'         => 'Phone Number',
 
     // Consent (lady flow)
     'photo_video_consent_lady'  => 'I accept that my photos and videos may be shared on social media.',

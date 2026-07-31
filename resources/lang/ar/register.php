@@ -52,7 +52,7 @@ return [
 
     // Lady-flow field label overrides
     'full_name_lady'            => 'الاسم الثلاثي',
-    'phone_number_lady'         => 'رقم التواصل الخاص بك',
+    'phone_number_lady'         => 'رقم الهاتف',
 
     // Consent (lady flow)
     'photo_video_consent_lady'  => 'أوافق على مشاركة صوري ومقاطع الفيديو الخاصة بي على وسائل التواصل الاجتماعي.',
