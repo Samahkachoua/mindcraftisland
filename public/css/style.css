@@ -173,7 +173,7 @@ h2 {
     color: var(--sky);
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; */
 }
 
 /* ── Alerts ──────────────────────────────────────────────── */
@@ -670,7 +670,7 @@ footer {
 
 .whatsapp-fab {
     position: fixed;
-    left: 1.5rem;
+    right: 1.5rem;
     bottom: 1.5rem;
     width: 3.2rem;
     height: 3.2rem;
@@ -777,19 +777,19 @@ footer {
 }
 
 [dir="rtl"] .whatsapp-fab {
-    left: auto;
-    right: 1.5rem;
+    right: auto;
+    left: 1.5rem;
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 600px) {
-    .navbar { flex-direction: column; gap: 0.5rem; padding: 1rem; }
+    .navbar { flex-direction: column; padding: 0.8rem; }
     .navbar nav { flex-wrap: wrap; justify-content: center; }
     .card { padding: 1.5rem 1rem; }
     h1 { font-size: 1.5rem; }
     .stats-bar { flex-direction: column; }
     .btn { padding: 0.7rem 1.2rem; }
     .footer-inner { flex-direction: column; text-align: center; }
-    .whatsapp-fab { width: 2.8rem; height: 2.8rem; left: 1rem; bottom: 1rem; }
-    [dir="rtl"] .whatsapp-fab { right: 1rem; }
+    .whatsapp-fab { width: 2.8rem; height: 2.8rem; right: 1rem; bottom: 1rem; }
+    [dir="rtl"] .whatsapp-fab { right: auto; left: 1rem; }
 }
