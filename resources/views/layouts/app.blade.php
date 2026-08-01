@@ -36,7 +36,7 @@
 
     <header>
         <div class="navbar">
-            <a href="{{ route('register') }}" class="brand">
+            <a href="{{ route('register') }}" class="brand @hasSection('admin-content') brand-hidden @endif">
                 <img src="{{ asset('favicons/android-chrome-192x192.png') }}" alt="" class="brand-logo">
                 Mind Craft <span>Island</span>
             </a>

@@ -54,6 +54,27 @@ class AdminController extends Controller
         $childCount = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') !== 'lady')->count();
         $ladyCount  = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === 'lady')->count();
 
+        return view('admin.dashboard', [
+            'total'      => $total,
+            'todayCount' => $todayCount,
+            'weekCount'  => $weekCount,
+            'childCount' => $childCount,
+            'ladyCount'  => $ladyCount,
+        ]);
+    }
+
+    public function registrations(Request $request)
+    {
+        try {
+            $registrations = $this->supabase->getAllRegistrations();
+        } catch (\RuntimeException $e) {
+            $registrations = [];
+            session()->flash('error', 'Could not load registrations: ' . $e->getMessage());
+        }
+
+        $collection = collect($registrations);
+        $total      = $collection->count();
+
         // Filter by registration type
         $type = $request->input('type', '');
         if (in_array($type, ['child', 'lady'], true)) {
@@ -101,10 +122,6 @@ class AdminController extends Controller
         $viewData = [
             'registrations' => $paginator,
             'total'         => $total,
-            'todayCount'    => $todayCount,
-            'weekCount'     => $weekCount,
-            'childCount'    => $childCount,
-            'ladyCount'     => $ladyCount,
             'search'        => $search,
             'sort'          => $sort,
             'direction'     => $direction,
@@ -115,7 +132,7 @@ class AdminController extends Controller
             return view('admin.partials.results', $viewData);
         }
 
-        return view('admin.dashboard', $viewData);
+        return view('admin.registrations', $viewData);
     }
 
     public function logout(Request $request)

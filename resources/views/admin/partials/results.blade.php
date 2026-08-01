@@ -3,7 +3,7 @@
     <div class="empty-icon">&#128203;</div>
     @if($search !== '')
     <p style="font-weight: 700; font-size: 1.1rem;">No results for "{{ $search }}".</p>
-    <p style="margin-top: 0.4rem; color: #8a9ab0;"><a href="{{ route('admin.dashboard', ['type' => $type, 'sort' => $sort, 'direction' => $direction]) }}" class="ajax-nav">Clear search</a> to see all registrations.</p>
+    <p style="margin-top: 0.4rem; color: #8a9ab0;"><a href="{{ route('admin.registrations', ['type' => $type, 'sort' => $sort, 'direction' => $direction]) }}" class="ajax-nav">Clear search</a> to see all registrations.</p>
     @else
     <p style="font-weight: 700; font-size: 1.1rem;">No registrations yet.</p>
     <p style="margin-top: 0.4rem; color: #8a9ab0;">Share the <a href="{{ route('register') }}">Registration Form</a> to get started.</p>
@@ -14,7 +14,7 @@
 @php
 $cols = [
 'full_name' => 'Full Name',
-'registration_type' => 'Type',
+'registration_type' => 'Registration Type',
 'date_of_birth' => 'Age',
 'created_at' => 'Submitted At',
 ];
@@ -56,26 +56,26 @@ return $currentDir === 'asc'
         <tbody>
             @foreach($registrations as $reg)
             <tr>
-                <td style="font-weight: 700;">{{ $reg['full_name'] ?? '—' }}</td>
-                <td>{{ ($reg['registration_type'] ?? 'child') === 'lady' ? 'Lady' : 'Child' }}</td>
-                <td>
+                <td data-label="Full Name" style="font-weight: 700;">{{ $reg['full_name'] ?? '—' }}</td>
+                <td data-label="Registration Type">{{ ($reg['registration_type'] ?? 'child') === 'lady' ? 'Lady' : 'Child' }}</td>
+                <td data-label="Age">
                     @if(isset($reg['date_of_birth']))
                     {{ \Carbon\Carbon::parse($reg['date_of_birth'])->age }} years
                     @else —
                     @endif
                 </td>
-                <td style="color: #8a9ab0; font-size: 0.83rem;">
+                <td data-label="Submitted At" style="color: #8a9ab0; font-size: 0.83rem;">
                     @if(isset($reg['created_at']))
                     {{ \Carbon\Carbon::parse($reg['created_at'])->format('d M Y, H:i') }}
                     @else —
                     @endif
                 </td>
-                <td>{{ $reg['phone_number'] ?? '—' }}</td>
-                <td>{{ $reg['emergency_contact_number'] ?? '—' }}</td>
-                <td>{{ $reg['mother_name'] ?? '—' }}</td>
-                <td>{{ $reg['medical_conditions'] ?? '—' }}</td>
-                <td>{{ $reg['field_of_interests'] ?? '—' }}</td>
-                <td>{{ !empty($reg['photo_video_consent']) ? '✓' : '✗' }}</td>
+                <td data-label="Phone Number">{{ $reg['phone_number'] ?? '—' }}</td>
+                <td data-label="Emergency Contact">{{ $reg['emergency_contact_number'] ?? '—' }}</td>
+                <td data-label="Mother's Name">{{ $reg['mother_name'] ?? '—' }}</td>
+                <td data-label="Medical Conditions">{{ $reg['medical_conditions'] ?? '—' }}</td>
+                <td data-label="Field of Interests">{{ $reg['field_of_interests'] ?? '—' }}</td>
+                <td data-label="Photo Consent">{{ !empty($reg['photo_video_consent']) ? '✓' : '✗' }}</td>
             </tr>
             @endforeach
         </tbody>
