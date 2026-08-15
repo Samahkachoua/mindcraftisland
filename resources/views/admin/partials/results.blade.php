@@ -57,7 +57,7 @@ return $currentDir === 'asc'
             @foreach($registrations as $reg)
             <tr>
                 <td data-label="Full Name" style="font-weight: 700;">{{ $reg['full_name'] ?? '—' }}</td>
-                <td data-label="Registration Type">{{ ($reg['registration_type'] ?? 'child') === 'lady' ? 'Lady' : 'Child' }}</td>
+                <td data-label="Registration Type">{{ ucfirst($reg['registration_type'] ?? 'child') }}</td>
                 <td data-label="Age">
                     @if(isset($reg['date_of_birth']))
                     {{ \Carbon\Carbon::parse($reg['date_of_birth'])->age }} years

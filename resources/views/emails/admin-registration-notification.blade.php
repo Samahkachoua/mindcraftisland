@@ -54,7 +54,7 @@
                     Registration Type
                   </td>
                   <td style="padding:12px 16px;border-bottom:1px solid #DDD0C0;color:#1E2D40;font-size:15px;font-weight:700;font-family:'Nunito','Segoe UI',Arial,sans-serif;">
-                    {{ ($data['registration_type'] ?? 'child') === 'lady' ? 'Ladies Program' : 'Child' }}
+                    {{ match($data['registration_type'] ?? 'child') { 'lady' => 'Ladies Program', 'kid' => 'Kid', default => 'Child' } }}
                   </td>
                 </tr>
                 <tr style="background-color:#FFFFFF;">

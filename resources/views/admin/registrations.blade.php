@@ -28,6 +28,7 @@
         </div>
         <select name="type" class="search-input" style="max-width: 160px;">
             <option value="" {{ $type === '' ? 'selected' : '' }}>All Types</option>
+            <option value="kid" {{ $type === 'kid' ? 'selected' : '' }}>Kid</option>
             <option value="child" {{ $type === 'child' ? 'selected' : '' }}>Child</option>
             <option value="lady" {{ $type === 'lady' ? 'selected' : '' }}>Lady</option>
         </select>

@@ -10,6 +10,11 @@
 
 @section('content')
 <div class="admin-layout" id="admin-layout">
+    <script>
+        if (localStorage.getItem('adminSidebarCollapsed') === '1') {
+            document.getElementById('admin-layout').classList.add('admin-layout-collapsed');
+        }
+    </script>
     <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="admin-sidebar">
         <span></span><span></span><span></span>
     </button>
@@ -35,6 +40,18 @@
             <a href="{{ route('admin.registrations') }}" class="admin-nav-link {{ request()->routeIs('admin.registrations') ? 'active' : '' }}" title="Registrations">
                 <span class="admin-nav-icon">&#128203;</span>
                 <span class="admin-nav-label">Registrations</span>
+            </a>
+            <a href="{{ route('admin.categories') }}" class="admin-nav-link {{ request()->routeIs('admin.categories') ? 'active' : '' }}" title="Categories">
+                <span class="admin-nav-icon">&#127991;</span>
+                <span class="admin-nav-label">Categories</span>
+            </a>
+            <a href="{{ route('admin.vendors') }}" class="admin-nav-link {{ request()->routeIs('admin.vendors') ? 'active' : '' }}" title="Vendors">
+                <span class="admin-nav-icon">&#127978;</span>
+                <span class="admin-nav-label">Vendors</span>
+            </a>
+            <a href="{{ route('admin.expenses') }}" class="admin-nav-link {{ request()->routeIs('admin.expenses') ? 'active' : '' }}" title="Expenses">
+                <span class="admin-nav-icon">&#128176;</span>
+                <span class="admin-nav-label">Expenses</span>
             </a>
         </nav>
     </aside>
@@ -102,9 +119,12 @@
         });
 
         if (collapseBtn) {
+            collapseBtn.setAttribute('aria-expanded', layout.classList.contains('admin-layout-collapsed') ? 'false' : 'true');
+
             collapseBtn.addEventListener('click', function () {
                 var collapsed = layout.classList.toggle('admin-layout-collapsed');
                 collapseBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+                localStorage.setItem('adminSidebarCollapsed', collapsed ? '1' : '0');
             });
         }
     });

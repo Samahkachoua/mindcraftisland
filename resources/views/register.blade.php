@@ -33,7 +33,7 @@
 
         <hr class="divider">
 
-        <form method="POST" action="{{ route('register.store') }}" novalidate>
+        <form method="POST" action="{{ route('register.store') }}" id="registration-form" novalidate>
             @csrf
 
             <div class="form-group">
@@ -46,18 +46,26 @@
                         <input
                             type="radio"
                             name="registration_type"
+                            value="kid"
+                            {{ old('registration_type') === 'kid' ? 'checked' : '' }}>
+                        <span class="radio-card-text">{{ __('register.registration_type_kid') }}</span>
+                    </label>
+                    <label class="radio-card">
+                        <input
+                            type="radio"
+                            name="registration_type"
                             value="child"
                             {{ old('registration_type', 'child') === 'child' ? 'checked' : '' }}>
                         <span class="radio-card-text">{{ __('register.registration_type_child') }}</span>
                     </label>
-                    <label class="radio-card">
+                    <!-- <label class="radio-card">
                         <input
                             type="radio"
                             name="registration_type"
                             value="lady"
                             {{ old('registration_type') === 'lady' ? 'checked' : '' }}>
                         <span class="radio-card-text">{{ __('register.registration_type_lady') }}</span>
-                    </label>
+                    </label> -->
                 </div>
                 @error('registration_type')
                 <span class="error-msg">{{ $message }}</span>
@@ -145,16 +153,19 @@
                         type="date"
                         id="date_of_birth"
                         name="date_of_birth"
-                        data-child-max="{{ now()->subYears(8)->format('Y-m-d') }}"
+                        data-kid-max="{{ now()->subYears(6)->format('Y-m-d') }}"
+                        data-kid-min="{{ now()->subYears(8)->format('Y-m-d') }}"
+                        data-child-max="{{ now()->subYears(8)->subDay()->format('Y-m-d') }}"
                         data-child-min="{{ now()->subYears(18)->format('Y-m-d') }}"
                         data-lady-max="{{ now()->subYears(18)->format('Y-m-d') }}"
-                        max="{{ now()->subYears(8)->format('Y-m-d') }}"
+                        max="{{ now()->subYears(8)->subDay()->format('Y-m-d') }}"
                         min="{{ now()->subYears(18)->format('Y-m-d') }}"
                         class="{{ $errors->has('date_of_birth') ? 'is-invalid' : '' }}">
                 </div>
                 @error('date_of_birth')
                 <span class="error-msg">{{ $message }}</span>
                 @enderror
+                <span class="error-msg" id="dob-client-error" style="display:none;"></span>
             </div>
 
             <div class="form-group">
@@ -247,6 +258,32 @@
         var childOnlyFields = document.querySelectorAll('[data-flow="child"]');
         var swappableLabels = document.querySelectorAll('[data-child-text][data-lady-text]');
         var dob = document.getElementById('date_of_birth');
+        var form = document.getElementById('registration-form');
+        var dobClientError = document.getElementById('dob-client-error');
+        var dobKidTooYoungMsg = @json(__('register.dob_kid_too_young'));
+
+        function currentType() {
+            var checked = document.querySelector('input[name="registration_type"]:checked');
+            return checked ? checked.value : 'child';
+        }
+
+        function kidMinAgeOk() {
+            if (currentType() !== 'kid' || !dob || !dob.value) return true;
+            return dob.value <= dob.dataset.kidMax;
+        }
+
+        function validateKidMinAge() {
+            if (kidMinAgeOk()) {
+                dob.classList.remove('is-invalid');
+                dobClientError.style.display = 'none';
+                dobClientError.textContent = '';
+                return true;
+            }
+            dob.classList.add('is-invalid');
+            dobClientError.textContent = dobKidTooYoungMsg;
+            dobClientError.style.display = 'block';
+            return false;
+        }
 
         function applyFlow(type) {
             childOnlyFields.forEach(function(el) {
@@ -261,6 +298,9 @@
                 if (type === 'lady') {
                     dob.max = dob.dataset.ladyMax;
                     dob.removeAttribute('min');
+                } else if (type === 'kid') {
+                    dob.max = dob.dataset.kidMax;
+                    dob.min = dob.dataset.kidMin;
                 } else {
                     dob.max = dob.dataset.childMax;
                     dob.min = dob.dataset.childMin;
@@ -271,11 +311,24 @@
         typeRadios.forEach(function(radio) {
             radio.addEventListener('change', function() {
                 applyFlow(this.value);
+                validateKidMinAge();
             });
         });
 
-        var checked = document.querySelector('input[name="registration_type"]:checked');
-        applyFlow(checked ? checked.value : 'child');
+        if (dob) {
+            dob.addEventListener('change', validateKidMinAge);
+        }
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!validateKidMinAge()) {
+                    e.preventDefault();
+                    dob.focus();
+                }
+            });
+        }
+
+        applyFlow(currentType());
     });
 </script>
 @endpush

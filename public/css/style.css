@@ -240,32 +240,54 @@ input[type="text"],
 input[type="tel"],
 input[type="date"],
 input[type="password"],
-input[type="number"] {
+input[type="number"],
+select,
+textarea {
     width: 100%;
     max-width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 1rem;
     border: 2px solid var(--border);
     border-radius: 10px;
     font-size: 1rem;
     font-family: 'Nunito', sans-serif;
     color: var(--navy);
-    background: var(--cream);
+    background-color: var(--cream);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
 }
 
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.6rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231E2D40' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.7rem;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 5rem;
+}
+
 input[type="date"] {
     line-height: 1.5;
-    min-height: calc(1.5rem + 1.5em + 4px);
+    min-height: calc(1rem + 1em);
 }
 
-input:focus {
+input:focus,
+select:focus,
+textarea:focus {
     border-color: var(--sky);
     box-shadow: 0 0 0 3px rgba(91,184,212,0.18);
-    background: var(--white);
+    background-color: var(--white);
 }
 
-input.is-invalid {
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
     border-color: var(--coral);
     box-shadow: 0 0 0 3px rgba(232,84,58,0.12);
 }
@@ -361,7 +383,7 @@ input.is-invalid {
 /* ── Buttons ─────────────────────────────────────────────── */
 .btn {
     display: inline-block;
-    padding: 0.75rem 2rem;
+    padding: 0.5rem 1.5rem;
     border-radius: 10px;
     font-size: 1rem;
     font-weight: 700;
@@ -401,6 +423,39 @@ input.is-invalid {
 
 .btn-block { width: 100%; text-align: center; }
 
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btn-icon:hover {
+    background: var(--gray);
+    border-color: var(--sky);
+}
+
+.btn-icon-danger:hover {
+    background: #fdecea;
+    border-color: var(--coral);
+    color: var(--coral);
+}
+
 /* ── Table ───────────────────────────────────────────────── */
 .table-wrapper {
     overflow-x: auto;
@@ -413,7 +468,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     background: var(--white);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 thead tr {
@@ -422,7 +477,7 @@ thead tr {
 }
 
 thead th {
-    padding: 0.85rem 1rem;
+    padding: 0.5rem;
     text-align: left;
     font-weight: 700;
     font-size: 0.82rem;
@@ -441,9 +496,19 @@ tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background-color: var(--gray); }
 
 tbody td {
-    padding: 0.85rem 1rem;
+    padding: 0.5rem;
     color: var(--navy);
     vertical-align: middle;
+}
+
+tfoot tr {
+    background-color: var(--gray);
+    border-top: 2px solid var(--border);
+}
+
+tfoot td {
+    padding: 0.5rem;
+    color: var(--navy);
 }
 
 .badge-count {
@@ -505,13 +570,13 @@ tbody td {
 
 .search-input {
     width: 100%;
-    padding: 0.62rem 2.4rem 0.62rem 1rem;
+    padding: 0.5rem 2.4rem 0.5rem 1rem;
     border: 2px solid var(--border);
     border-radius: 10px;
     font-size: 0.95rem;
     font-family: 'Nunito', sans-serif;
     color: var(--navy);
-    background: var(--white);
+    background-color: var(--white);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
 }
@@ -875,6 +940,73 @@ tbody td {
     }
 }
 
+/* ── Modal ───────────────────────────────────────────────── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,25,35,0.45);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 500;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(30,45,64,0.25);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.35rem 1.5rem 1rem;
+}
+
+.modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #8a9ab0;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.modal-close:hover {
+    background: var(--gray);
+    color: var(--coral);
+}
+
+.modal-body {
+    padding: 0.25rem 1.5rem 1rem;
+}
+
+.modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.5rem;
+}
+
 /* ── Footer ──────────────────────────────────────────────── */
 footer {
     position: relative;
@@ -1060,7 +1192,7 @@ footer {
 
     .table-wrapper { overflow-x: visible; border: none; box-shadow: none; }
 
-    table, thead, tbody, th, tr, td { display: block; }
+    table, thead, tbody, tfoot, th, tr, td { display: block; }
 
     thead { display: none; }
 
@@ -1075,7 +1207,8 @@ footer {
 
     tbody tr:hover { background: var(--white); }
 
-    tbody td {
+    tbody td,
+    tfoot td {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -1087,13 +1220,22 @@ footer {
 
     tbody td:last-child { border-bottom: none; }
 
+    tfoot tr {
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+
+    tfoot td.tfoot-spacer { display: none; }
+    tfoot td:last-child { border-bottom: none; }
+
     tbody td[data-label="Submitted At"],
     tbody td[data-label="Emergency Contact"],
     tbody td[data-label="Mother's Name"] {
         display: none;
     }
 
-    tbody td::before {
+    tbody td::before,
+    tfoot td::before {
         content: attr(data-label);
         font-weight: 700;
         font-size: 0.75rem;

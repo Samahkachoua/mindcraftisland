@@ -77,7 +77,7 @@ class AdminController extends Controller
 
         // Filter by registration type
         $type = $request->input('type', '');
-        if (in_array($type, ['child', 'lady'], true)) {
+        if (in_array($type, ['kid', 'child', 'lady'], true)) {
             $collection = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === $type);
         }
 
