@@ -273,7 +273,7 @@ textarea {
 }
 
 input[type="date"] {
-    line-height: 1.5;
+    line-height: 1.1;
     min-height: calc(1rem + 1em);
 }
 

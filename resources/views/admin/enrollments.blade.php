@@ -51,7 +51,7 @@
         <option value="partial">Partial</option>
         <option value="paid">Paid</option>
     </select>
-    <button type="button" class="btn btn-secondary" id="enrollments-filter-clear" style="padding: 0.62rem 1.25rem; font-size: 0.92rem;">Clear Filters</button>
+    <button type="button" class="btn btn-secondary" id="enrollments-filter-clear" style="padding: 0.62rem 1rem; font-size: 0.92rem;">Clear Filters</button>
 </div>
 
 <div class="table-wrapper">
