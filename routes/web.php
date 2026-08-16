@@ -5,6 +5,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 // Public registration
@@ -38,6 +42,25 @@ Route::middleware('admin')->group(function () {
     Route::post('/admin/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
     Route::put('/admin/vendors/{id}', [VendorController::class, 'update'])->name('admin.vendors.update');
     Route::delete('/admin/vendors/{id}', [VendorController::class, 'destroy'])->name('admin.vendors.destroy');
+
+    Route::get('/admin/programs', [ProgramController::class, 'index'])->name('admin.programs');
+    Route::post('/admin/programs', [ProgramController::class, 'store'])->name('admin.programs.store');
+    Route::put('/admin/programs/{id}', [ProgramController::class, 'update'])->name('admin.programs.update');
+    Route::delete('/admin/programs/{id}', [ProgramController::class, 'destroy'])->name('admin.programs.destroy');
+
+    Route::get('/admin/sessions', [SessionController::class, 'index'])->name('admin.sessions');
+    Route::post('/admin/sessions', [SessionController::class, 'store'])->name('admin.sessions.store');
+    Route::put('/admin/sessions/{id}', [SessionController::class, 'update'])->name('admin.sessions.update');
+    Route::delete('/admin/sessions/{id}', [SessionController::class, 'destroy'])->name('admin.sessions.destroy');
+
+    Route::get('/admin/enrollments', [EnrollmentController::class, 'index'])->name('admin.enrollments');
+    Route::post('/admin/enrollments', [EnrollmentController::class, 'store'])->name('admin.enrollments.store');
+    Route::put('/admin/enrollments/{id}', [EnrollmentController::class, 'update'])->name('admin.enrollments.update');
+    Route::delete('/admin/enrollments/{id}', [EnrollmentController::class, 'destroy'])->name('admin.enrollments.destroy');
+
+    Route::get('/admin/payments', [PaymentController::class, 'index'])->name('admin.payments');
+    Route::post('/admin/payments', [PaymentController::class, 'store'])->name('admin.payments.store');
+    Route::delete('/admin/payments/{id}', [PaymentController::class, 'destroy'])->name('admin.payments.destroy');
 
     Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 });

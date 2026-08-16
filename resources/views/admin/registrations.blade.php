@@ -27,7 +27,7 @@
             <a href="{{ route('admin.registrations') }}" class="search-clear" id="dashboard-search-clear" title="Clear search" style="display: {{ $search !== '' ? 'inline' : 'none' }};">&#215;</a>
         </div>
         <select name="type" class="search-input" style="max-width: 160px;">
-            <option value="" {{ $type === '' ? 'selected' : '' }}>All Types</option>
+            <option value="" {{ $type === '' ? 'selected' : '' }}>Type</option>
             <option value="kid" {{ $type === 'kid' ? 'selected' : '' }}>Kid</option>
             <option value="child" {{ $type === 'child' ? 'selected' : '' }}>Child</option>
             <option value="lady" {{ $type === 'lady' ? 'selected' : '' }}>Lady</option>

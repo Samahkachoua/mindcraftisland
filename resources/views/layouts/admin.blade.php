@@ -53,6 +53,22 @@
                 <span class="admin-nav-icon">&#128176;</span>
                 <span class="admin-nav-label">Expenses</span>
             </a>
+            <a href="{{ route('admin.programs') }}" class="admin-nav-link {{ request()->routeIs('admin.programs') ? 'active' : '' }}" title="Programs">
+                <span class="admin-nav-icon">&#128218;</span>
+                <span class="admin-nav-label">Programs</span>
+            </a>
+            <a href="{{ route('admin.sessions') }}" class="admin-nav-link {{ request()->routeIs('admin.sessions') ? 'active' : '' }}" title="Sessions">
+                <span class="admin-nav-icon">&#127891;</span>
+                <span class="admin-nav-label">Sessions</span>
+            </a>
+            <a href="{{ route('admin.enrollments') }}" class="admin-nav-link {{ request()->routeIs('admin.enrollments') ? 'active' : '' }}" title="Enrollments">
+                <span class="admin-nav-icon">&#128221;</span>
+                <span class="admin-nav-label">Enrollments</span>
+            </a>
+            <a href="{{ route('admin.payments') }}" class="admin-nav-link {{ request()->routeIs('admin.payments') ? 'active' : '' }}" title="Payments">
+                <span class="admin-nav-icon">&#128179;</span>
+                <span class="admin-nav-label">Payments</span>
+            </a>
         </nav>
     </aside>
 

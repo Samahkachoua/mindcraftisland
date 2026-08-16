@@ -139,6 +139,148 @@ class SupabaseService
         $this->deleteRow('expenses', $id);
     }
 
+    // ── Programs ────────────────────────────────────────────
+
+    public function getAllPrograms(): array
+    {
+        return $this->fetchAll('programs', 'name.asc');
+    }
+
+    public function insertProgram(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+        $data['updated_at'] = $data['created_at'];
+
+        return $this->insertRow('programs', $data);
+    }
+
+    public function updateProgram(int $id, array $data): array
+    {
+        $data['updated_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->updateRow('programs', $id, $data);
+    }
+
+    public function deleteProgram(int $id): void
+    {
+        $this->deleteRow('programs', $id);
+    }
+
+    // ── Sessions ────────────────────────────────────────────
+
+    public function getAllSessions(): array
+    {
+        return $this->fetchAll('sessions', 'name.asc');
+    }
+
+    public function insertSession(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+        $data['updated_at'] = $data['created_at'];
+
+        return $this->insertRow('sessions', $data);
+    }
+
+    public function updateSession(int $id, array $data): array
+    {
+        $data['updated_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->updateRow('sessions', $id, $data);
+    }
+
+    public function deleteSession(int $id): void
+    {
+        $this->deleteRow('sessions', $id);
+    }
+
+    // ── Enrollments ─────────────────────────────────────────
+
+    public function getAllEnrollments(): array
+    {
+        return $this->fetchAll('enrollments', 'created_at.desc');
+    }
+
+    public function getEnrollment(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/enrollments", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (enrollments): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
+    }
+
+    public function insertEnrollment(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->insertRow('enrollments', $data);
+    }
+
+    public function updateEnrollment(int $id, array $data): array
+    {
+        return $this->updateRow('enrollments', $id, $data);
+    }
+
+    public function deleteEnrollment(int $id): void
+    {
+        $this->deleteRow('enrollments', $id);
+    }
+
+    // ── Payments ────────────────────────────────────────────
+
+    public function getAllPayments(): array
+    {
+        return $this->fetchAll('payments', 'payment_date.desc');
+    }
+
+    public function getPayment(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/payments", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (payments): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
+    }
+
+    public function getPaymentsForEnrollment(int $enrollmentId): array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/payments", [
+                'enrollment_id' => "eq.{$enrollmentId}",
+                'select'        => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (payments): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    public function insertPayment(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->insertRow('payments', $data);
+    }
+
+    public function deletePayment(int $id): void
+    {
+        $this->deleteRow('payments', $id);
+    }
+
     // ── Generic REST helpers ────────────────────────────────
 
     private function fetchAll(string $table, string $order): array
