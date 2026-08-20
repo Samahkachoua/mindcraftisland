@@ -47,7 +47,7 @@ return [
 
     // Registration type
     'registration_type_heading' => 'من الذي تقوم بتسجيله؟',
-    'registration_type_kid'     => 'تسجيل الطفل (6 – 8 سنة)',
+    'registration_type_kid'     => 'تسجيل الطفل (5 – 8 سنة)',
     'registration_type_child'   => 'تسجيل الشباب (8+ – 18 سنة)',
     'registration_type_lady'    => 'تسجيل برنامج السيدات (18 سنة فما فوق)',
 

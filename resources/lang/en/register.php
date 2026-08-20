@@ -47,7 +47,7 @@ return [
 
     // Registration type
     'registration_type_heading' => 'Who are you registering?',
-    'registration_type_kid'     => 'Kid Registration (6 – 8)',
+    'registration_type_kid'     => 'Kid Registration (5 – 8)',
     'registration_type_child'   => 'Child Registration (8+ – 18)',
     'registration_type_lady'    => 'Ladies Registration (18+)',
 

@@ -27,8 +27,16 @@
         <div class="stat-label">This Week</div>
     </div>
     <div class="stat-card">
+        <div class="stat-value" style="color: var(--sky);">{{ $monthCount }}</div>
+        <div class="stat-label">This Month</div>
+    </div>
+    <div class="stat-card">
         <div class="stat-value" style="color: var(--coral);">{{ $childCount }}</div>
         <div class="stat-label">Total Children</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--green);">{{ $kidCount }}</div>
+        <div class="stat-label">Total Kids</div>
     </div>
     <div class="stat-card">
         <div class="stat-value" style="color: var(--gold);">{{ $ladyCount }}</div>
