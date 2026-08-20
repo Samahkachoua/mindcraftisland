@@ -52,7 +52,7 @@ class AdminController extends Controller
         $todayCount = $collection->filter(fn($r) => isset($r['created_at']) && \Carbon\Carbon::parse($r['created_at'])->isToday())->count();
         $weekCount  = $collection->filter(fn($r) => isset($r['created_at']) && \Carbon\Carbon::parse($r['created_at'])->isCurrentWeek())->count();
         $monthCount = $collection->filter(fn($r) => isset($r['created_at']) && \Carbon\Carbon::parse($r['created_at'])->isSameMonth(now()))->count();
-        $childCount = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') !== 'lady')->count();
+        $childCount = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === 'child')->count();
         $kidCount   = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === 'kid')->count();
         $ladyCount  = $collection->filter(fn($r) => ($r['registration_type'] ?? 'child') === 'lady')->count();
 
