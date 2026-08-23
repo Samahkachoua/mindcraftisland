@@ -37,8 +37,8 @@ class RegistrationController extends Controller
         if ($isLady) {
             $dobRules[] = 'before_or_equal:' . now()->subYears(18)->format('Y-m-d');
         } elseif ($isKid) {
-            // Kid: 5-8 years old, inclusive on both ends.
-            $dobRules[] = 'before_or_equal:' . now()->subYears(5)->format('Y-m-d');
+            // Kid: 4-8 years old, inclusive on both ends.
+            $dobRules[] = 'before_or_equal:' . now()->subYears(4)->format('Y-m-d');
             $dobRules[] = 'after_or_equal:' . now()->subYears(8)->format('Y-m-d');
         } else {
             // Child: strictly older than 8 (age 8 belongs to Kid only) up to and including 18.

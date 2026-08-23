@@ -47,7 +47,7 @@ return [
 
     // Registration type
     'registration_type_heading' => 'من الذي تقوم بتسجيله؟',
-    'registration_type_kid'     => 'تسجيل الطفل (5 – 8 سنة)',
+    'registration_type_kid'     => 'تسجيل الطفل (4 – 8 سنة)',
     'registration_type_child'   => 'تسجيل الشباب (8+ – 18 سنة)',
     'registration_type_lady'    => 'تسجيل برنامج السيدات (18 سنة فما فوق)',
 
@@ -61,7 +61,7 @@ return [
     // Age validation
     'dob_child_too_old'         => 'يجب ألا يتجاوز عمر الطفل 18 سنة.',
     'dob_lady_min'              => 'يجب أن يكون عمر المشاركة 18 سنة على الأقل.',
-    'dob_kid_too_young'         => 'يجب أن يكون عمر الطفل 5 سنوات على الأقل.',
+    'dob_kid_too_young'         => 'يجب أن يكون عمر الطفل 4 سنوات على الأقل.',
     'dob_kid_too_old'           => 'يجب ألا يتجاوز عمر الطفل 8 سنوات.',
 
 ];

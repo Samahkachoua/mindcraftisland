@@ -47,7 +47,7 @@ return [
 
     // Registration type
     'registration_type_heading' => 'Who are you registering?',
-    'registration_type_kid'     => 'Kid Registration (5 – 8)',
+    'registration_type_kid'     => 'Kid Registration (4 – 8)',
     'registration_type_child'   => 'Child Registration (8+ – 18)',
     'registration_type_lady'    => 'Ladies Registration (18+)',
 
@@ -61,7 +61,7 @@ return [
     // Age validation
     'dob_child_too_old'         => 'The child must be no older than 18 years old.',
     'dob_lady_min'              => 'The participant must be at least 18 years old.',
-    'dob_kid_too_young'         => 'The kid must be at least 5 years old.',
+    'dob_kid_too_young'         => 'The kid must be at least 4 years old.',
     'dob_kid_too_old'           => 'The kid must be no older than 8 years old.',
 
 ];

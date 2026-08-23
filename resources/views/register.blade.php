@@ -153,7 +153,7 @@
                         type="date"
                         id="date_of_birth"
                         name="date_of_birth"
-                        data-kid-max="{{ now()->subYears(5)->format('Y-m-d') }}"
+                        data-kid-max="{{ now()->subYears(4)->format('Y-m-d') }}"
                         data-kid-min="{{ now()->subYears(8)->format('Y-m-d') }}"
                         data-child-max="{{ now()->subYears(8)->subDay()->format('Y-m-d') }}"
                         data-child-min="{{ now()->subYears(18)->format('Y-m-d') }}"
