@@ -90,6 +90,29 @@ class SupabaseService
         $this->deleteRow('categories', $id);
     }
 
+    // ── Members ─────────────────────────────────────────────
+
+    public function getAllMembers(): array
+    {
+        return $this->fetchAll('members', 'name.asc');
+    }
+
+    public function insertMember(array $data): array
+    {
+        return $this->insertRow('members', $data);
+    }
+
+    public function updateMember(int $id, array $data): array
+    {
+        return $this->updateRow('members', $id, $data);
+    }
+
+    public function deleteMember(int $id): void
+    {
+        $this->deleteRow('members', $id);
+    }
+
+
     // ── Vendors ─────────────────────────────────────────────
 
     public function getAllVendors(): array
@@ -117,6 +140,21 @@ class SupabaseService
     public function getAllExpenses(): array
     {
         return $this->fetchAll('expenses', 'expense_date.desc');
+    }
+
+    public function getExpense(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/expenses", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (expenses): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
     }
 
     public function insertExpense(array $data): array
@@ -279,6 +317,282 @@ class SupabaseService
     public function deletePayment(int $id): void
     {
         $this->deleteRow('payments', $id);
+    }
+
+    // ── Accounts ────────────────────────────────────────────
+
+    public function getAllAccounts(): array
+    {
+        return $this->fetchAll('accounts', 'name_en.asc');
+    }
+
+    public function getAccount(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/accounts", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (accounts): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
+    }
+
+    public function insertAccount(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+        $data['updated_at'] = $data['created_at'];
+
+        return $this->insertRow('accounts', $data);
+    }
+
+    public function updateAccount(int $id, array $data): array
+    {
+        $data['updated_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->updateRow('accounts', $id, $data);
+    }
+
+    public function deleteAccount(int $id): void
+    {
+        $this->deleteRow('accounts', $id);
+    }
+
+    public function getTransactionsForAccount(int $accountId): array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/transactions", [
+                'account_id' => "eq.{$accountId}",
+                'select'     => 'id',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (transactions): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    // Full rows, chronological (date then id, so same-day rows keep a
+    // stable order) — the account ledger walks this once to compute each
+    // row's running balance before any display filter is applied.
+    public function getAllTransactionsForAccount(int $accountId): array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/transactions", [
+                'account_id' => "eq.{$accountId}",
+                'select'     => '*',
+                'order'      => 'date.asc,id.asc',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (transactions): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    // Reads the account_balances view built in the original ledger
+    // migration — the ledger page's "current balance" always comes from
+    // here, never a second calculation.
+    public function getAccountBalanceRow(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/account_balances", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (account_balances): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
+    }
+
+    public function getPaymentsByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/payments", [
+                'id'     => 'in.(' . implode(',', $ids) . ')',
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (payments): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    public function getExpensesByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/expenses", [
+                'id'     => 'in.(' . implode(',', $ids) . ')',
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (expenses): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    public function getRentalsByPaymentIds(array $paymentIds): array
+    {
+        if (empty($paymentIds)) {
+            return [];
+        }
+
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/rentals", [
+                'payment_id' => 'in.(' . implode(',', $paymentIds) . ')',
+                'select'     => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (rentals): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    // ── Transactions ────────────────────────────────────────
+
+    public function insertTransaction(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->insertRow('transactions', $data);
+    }
+
+    public function getTransactionsForReference(string $referenceType, int $referenceId): array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/transactions", [
+                'reference_type' => "eq.{$referenceType}",
+                'reference_id'   => "eq.{$referenceId}",
+                'select'         => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (transactions): ' . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    // Transactions are append-only everywhere except one narrow, deliberate
+    // carve-out (see rentals_delete_migration.sql): a transaction whose
+    // reference is a payment that a Rental still points to. The DB trigger
+    // itself enforces that scope — this method has no special knowledge of
+    // it and will fail the same way insertRow's callers do for anything the
+    // trigger still refuses.
+    public function deleteTransaction(int $id): void
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->delete("{$this->url}/rest/v1/transactions?id=eq.{$id}");
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase delete failed (transactions): ' . $response->body());
+        }
+    }
+
+    // ── Rental items ────────────────────────────────────────
+
+    public function getAllRentalItems(): array
+    {
+        return $this->fetchAll('rental_items', 'name_en.asc');
+    }
+
+    public function getRentalItem(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/rental_items", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (rental_items): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
+    }
+
+    public function insertRentalItem(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+        $data['updated_at'] = $data['created_at'];
+
+        return $this->insertRow('rental_items', $data);
+    }
+
+    public function updateRentalItem(int $id, array $data): array
+    {
+        $data['updated_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->updateRow('rental_items', $id, $data);
+    }
+
+    public function deleteRentalItem(int $id): void
+    {
+        $this->deleteRow('rental_items', $id);
+    }
+
+    // ── Rentals ─────────────────────────────────────────────
+
+    public function getAllRentals(): array
+    {
+        return $this->fetchAll('rentals', 'date_out.desc');
+    }
+
+    public function getRental(int $id): ?array
+    {
+        $response = Http::withHeaders($this->headers(true))
+            ->get("{$this->url}/rest/v1/rentals", [
+                'id'     => "eq.{$id}",
+                'select' => '*',
+            ]);
+
+        if ($response->failed()) {
+            throw new \RuntimeException('Supabase fetch failed (rentals): ' . $response->body());
+        }
+
+        return ($response->json() ?? [])[0] ?? null;
+    }
+
+    public function insertRental(array $data): array
+    {
+        $data['created_at'] = now('Asia/Beirut')->toIso8601String();
+        $data['updated_at'] = $data['created_at'];
+
+        return $this->insertRow('rentals', $data);
+    }
+
+    public function updateRental(int $id, array $data): array
+    {
+        $data['updated_at'] = now('Asia/Beirut')->toIso8601String();
+
+        return $this->updateRow('rentals', $id, $data);
+    }
+
+    public function deleteRental(int $id): void
+    {
+        $this->deleteRow('rentals', $id);
     }
 
     // ── Generic REST helpers ────────────────────────────────

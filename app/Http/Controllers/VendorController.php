@@ -18,6 +18,19 @@ class VendorController extends Controller
             session()->flash('error', 'Could not load vendors: ' . $e->getMessage());
         }
 
+        try {
+            $expenses = $this->supabase->getAllExpenses();
+        } catch (\RuntimeException $e) {
+            $expenses = [];
+        }
+
+        $usedVendorIds = collect($expenses)->pluck('vendor_id')->unique()->all();
+
+        $vendors = collect($vendors)->map(function ($vendor) use ($usedVendorIds) {
+            $vendor['in_use'] = in_array($vendor['id'], $usedVendorIds, true);
+            return $vendor;
+        })->all();
+
         return view('admin.vendors', [
             'vendors' => $vendors,
             'total'   => count($vendors),

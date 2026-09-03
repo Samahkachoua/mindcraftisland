@@ -37,7 +37,14 @@
         <option value="{{ $program['id'] }}">{{ $program['name'] }}</option>
         @endforeach
     </select>
-    <input type="date" id="payments-filter-date" class="search-input" style="max-width: 170px;" title="Filter by payment date">
+    <select id="payments-filter-session" class="search-input" style="max-width: 200px;">
+        <option value="">Session</option>
+        @foreach($sessions as $session)
+        <option value="{{ $session['id'] }}">{{ $session['name'] }}</option>
+        @endforeach
+    </select>
+    <input type="date" id="payments-filter-date-from" class="search-input" style="max-width: 170px;" title="From payment date">
+    <input type="date" id="payments-filter-date-to" class="search-input" style="max-width: 170px;" title="To payment date">
     <select id="payments-filter-participant" class="search-input" style="max-width: 200px;">
         <option value="">Participant</option>
         @foreach($registrations as $registration)
@@ -48,6 +55,12 @@
         <option value="">Method</option>
         @foreach($paymentMethods as $method)
         <option value="{{ $method }}">{{ $method }}</option>
+        @endforeach
+    </select>
+    <select id="payments-filter-account" class="search-input" style="max-width: 200px;">
+        <option value="">Account</option>
+        @foreach($allAccounts as $account)
+        <option value="{{ $account['id'] }}">{{ \App\Http\Controllers\AccountController::optionLabel($account) }}</option>
         @endforeach
     </select>
     <button type="button" class="btn btn-secondary" id="payments-filter-clear" style="padding: 0.62rem 1.25rem; font-size: 0.92rem;">Clear Filters</button>
@@ -62,6 +75,7 @@
                 <th>Enrolled In</th>
                 <th>Amount</th>
                 <th>Method</th>
+                <th>Account</th>
                 <th>Notes</th>
                 <th>Recorded By</th>
                 <th style="width: 80px;">Actions</th>
@@ -71,9 +85,11 @@
             @foreach($payments as $payment)
             <tr data-payment-row
                 data-program-id="{{ $payment['program_id'] }}"
+                data-session-id="{{ $payment['session_id'] }}"
                 data-payment-date="{{ $payment['payment_date'] }}"
                 data-registration-id="{{ $payment['registration_id'] }}"
                 data-payment-method="{{ $payment['payment_method'] }}"
+                data-account-id="{{ $payment['account_id'] }}"
                 data-amount="{{ $payment['amount'] }}">
                 <td data-label="Date">
                     @if(isset($payment['payment_date']))
@@ -94,6 +110,7 @@
                 </td>
                 <td data-label="Amount" style="font-weight: 700;">{{ number_format((float) ($payment['amount'] ?? 0), 2) }}</td>
                 <td data-label="Method">{{ $payment['payment_method'] ?? '—' }}</td>
+                <td data-label="Account">{{ $payment['account_name'] ?? '—' }}</td>
                 <td data-label="Notes">{{ $payment['notes'] ?? '—' }}</td>
                 <td data-label="Recorded By" style="color: #8a9ab0; font-size: 0.83rem;">{{ $payment['created_by'] ?? '—' }}</td>
                 <td data-label="Actions">
@@ -107,14 +124,14 @@
             </tr>
             @endforeach
             <tr id="payments-no-match-row" style="display:none;">
-                <td colspan="8" style="text-align:center; color:#8a9ab0; padding: 2rem 0;">No payments match these filters.</td>
+                <td colspan="9" style="text-align:center; color:#8a9ab0; padding: 2rem 0;">No payments match these filters.</td>
             </tr>
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="3" style="font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; font-size: 0.82rem;">Total Paid</td>
                 <td id="payments-total-sum" style="font-weight: 800;">0.00</td>
-                <td colspan="4" class="tfoot-spacer"></td>
+                <td colspan="5" class="tfoot-spacer"></td>
             </tr>
         </tfoot>
     </table>
@@ -154,6 +171,18 @@
                     <input type="number" id="payment-amount" name="amount" step="0.01" min="0.01" required class="{{ $errors->has('amount') ? 'is-invalid' : '' }}">
                     <p style="margin: 0.35rem 0 0; color: #8a9ab0; font-size: 0.82rem;" id="payment-balance-hint"></p>
                     @error('amount')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="payment-account">Account</label>
+                    <select id="payment-account" name="account_id" required class="{{ $errors->has('account_id') ? 'is-invalid' : '' }}">
+                        <option value="" disabled selected>Select an account…</option>
+                        @foreach($accounts as $account)
+                        <option value="{{ $account['id'] }}">{{ $account['label'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('account_id')
                     <span class="error-msg">{{ $message }}</span>
                     @enderror
                 </div>
@@ -200,6 +229,7 @@
         var overlay = document.getElementById('add-payment-modal-overlay');
         var form = document.getElementById('add-payment-form');
         var enrollmentField = document.getElementById('payment-enrollment');
+        var accountField = document.getElementById('payment-account');
         var amountField = document.getElementById('payment-amount');
         var balanceHint = document.getElementById('payment-balance-hint');
         var dateField = document.getElementById('payment-date');
@@ -227,6 +257,12 @@
 
         function closeModal() {
             overlay.classList.remove('open');
+            clearErrors();
+        }
+
+        function clearErrors() {
+            form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+            form.querySelectorAll('.error-msg').forEach(function (el) { el.remove(); });
         }
 
         function resetForm() {
@@ -251,6 +287,7 @@
             var old = JSON.parse(overlay.dataset.old || '{}');
             openModal();
             if (old.enrollment_id) enrollmentField.value = old.enrollment_id;
+            if (old.account_id) accountField.value = old.account_id;
             if (old.amount) amountField.value = old.amount;
             if (old.payment_date) dateField.value = old.payment_date;
             if (old.payment_method) methodField.value = old.payment_method;
@@ -269,17 +306,23 @@
         var paymentRows = Array.prototype.slice.call(document.querySelectorAll('tbody tr[data-payment-row]'));
         var noMatchRow = document.getElementById('payments-no-match-row');
         var filterProgram = document.getElementById('payments-filter-program');
-        var filterDate = document.getElementById('payments-filter-date');
+        var filterSession = document.getElementById('payments-filter-session');
+        var filterDateFrom = document.getElementById('payments-filter-date-from');
+        var filterDateTo = document.getElementById('payments-filter-date-to');
         var filterParticipant = document.getElementById('payments-filter-participant');
         var filterMethod = document.getElementById('payments-filter-method');
+        var filterAccount = document.getElementById('payments-filter-account');
         var filterClear = document.getElementById('payments-filter-clear');
         var totalSumEl = document.getElementById('payments-total-sum');
 
         function rowMatchesPaymentFilters(row) {
             if (filterProgram.value && row.dataset.programId !== filterProgram.value) return false;
-            if (filterDate.value && row.dataset.paymentDate !== filterDate.value) return false;
+            if (filterSession.value && row.dataset.sessionId !== filterSession.value) return false;
+            if (filterDateFrom.value && row.dataset.paymentDate < filterDateFrom.value) return false;
+            if (filterDateTo.value && row.dataset.paymentDate > filterDateTo.value) return false;
             if (filterParticipant.value && row.dataset.registrationId !== filterParticipant.value) return false;
             if (filterMethod.value && row.dataset.paymentMethod !== filterMethod.value) return false;
+            if (filterAccount.value && row.dataset.accountId !== filterAccount.value) return false;
             return true;
         }
 
@@ -298,15 +341,18 @@
             totalSumEl.textContent = totalSum.toFixed(2);
         }
 
-        [filterProgram, filterDate, filterParticipant, filterMethod].forEach(function (el) {
+        [filterProgram, filterSession, filterDateFrom, filterDateTo, filterParticipant, filterMethod, filterAccount].forEach(function (el) {
             el.addEventListener('change', renderPayments);
         });
 
         filterClear.addEventListener('click', function () {
             filterProgram.value = '';
-            filterDate.value = '';
+            filterSession.value = '';
+            filterDateFrom.value = '';
+            filterDateTo.value = '';
             filterParticipant.value = '';
             filterMethod.value = '';
+            filterAccount.value = '';
             renderPayments();
         });
 

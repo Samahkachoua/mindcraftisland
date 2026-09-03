@@ -9,6 +9,10 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\RentalItemController;
+use App\Http\Controllers\RentalController;
+use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Route;
 
 // Public registration
@@ -61,6 +65,29 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/payments', [PaymentController::class, 'index'])->name('admin.payments');
     Route::post('/admin/payments', [PaymentController::class, 'store'])->name('admin.payments.store');
     Route::delete('/admin/payments/{id}', [PaymentController::class, 'destroy'])->name('admin.payments.destroy');
+
+    Route::get('/admin/members', [MemberController::class, 'index'])->name('admin.members');
+    Route::post('/admin/members', [MemberController::class, 'store'])->name('admin.members.store');
+    Route::put('/admin/members/{id}', [MemberController::class, 'update'])->name('admin.members.update');
+    Route::delete('/admin/members/{id}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
+
+
+    Route::get('/admin/rental-items', [RentalItemController::class, 'index'])->name('admin.rental-items');
+    Route::post('/admin/rental-items', [RentalItemController::class, 'store'])->name('admin.rental-items.store');
+    Route::put('/admin/rental-items/{id}', [RentalItemController::class, 'update'])->name('admin.rental-items.update');
+    Route::delete('/admin/rental-items/{id}', [RentalItemController::class, 'destroy'])->name('admin.rental-items.destroy');
+
+    Route::get('/admin/rentals', [RentalController::class, 'index'])->name('admin.rentals');
+    Route::post('/admin/rentals', [RentalController::class, 'store'])->name('admin.rentals.store');
+    Route::post('/admin/rentals/{id}/return', [RentalController::class, 'returnRental'])->name('admin.rentals.return');
+    Route::put('/admin/rentals/{id}', [RentalController::class, 'update'])->name('admin.rentals.update');
+    Route::delete('/admin/rentals/{id}', [RentalController::class, 'destroy'])->name('admin.rentals.destroy');
+
+    Route::get('/admin/accounts', [AccountController::class, 'index'])->name('admin.accounts');
+    Route::post('/admin/accounts', [AccountController::class, 'store'])->name('admin.accounts.store');
+    Route::get('/admin/accounts/{id}', [AccountController::class, 'show'])->name('admin.accounts.show');
+    Route::put('/admin/accounts/{id}', [AccountController::class, 'update'])->name('admin.accounts.update');
+    Route::delete('/admin/accounts/{id}', [AccountController::class, 'destroy'])->name('admin.accounts.destroy');
 
     Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 });

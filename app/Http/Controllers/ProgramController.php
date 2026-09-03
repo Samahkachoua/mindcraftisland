@@ -20,6 +20,19 @@ class ProgramController extends Controller
             session()->flash('error', 'Could not load programs: ' . $e->getMessage());
         }
 
+        try {
+            $enrollments = $this->supabase->getAllEnrollments();
+        } catch (\RuntimeException $e) {
+            $enrollments = [];
+        }
+
+        $usedProgramIds = collect($enrollments)->pluck('program_id')->filter()->unique()->all();
+
+        $programs = collect($programs)->map(function ($program) use ($usedProgramIds) {
+            $program['in_use'] = in_array($program['id'], $usedProgramIds, true);
+            return $program;
+        })->all();
+
         return view('admin.programs', [
             'programs' => $programs,
             'total'    => count($programs),

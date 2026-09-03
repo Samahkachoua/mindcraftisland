@@ -43,10 +43,20 @@ class PaymentController extends Controller
             $sessions = [];
         }
 
+        try {
+            $accounts = $this->supabase->getAllAccounts();
+        } catch (\RuntimeException $e) {
+            $accounts = [];
+        }
+
         $registrationsById = collect($registrations)->keyBy('id');
         $programsById       = collect($programs)->keyBy('id');
         $sessionsById       = collect($sessions)->keyBy('id');
         $enrollmentsById    = collect($enrollments)->keyBy('id');
+        $accountsById       = collect($accounts)->keyBy('id');
+        $activeAccounts     = collect($accounts)->where('is_active', true)
+            ->map(fn($a) => $a + ['label' => AccountController::optionLabel($a)])
+            ->values()->all();
 
         $targetName = function (array $enrollment) use ($programsById, $sessionsById) {
             return $enrollment['enrollment_type'] === 'program'
@@ -71,13 +81,15 @@ class PaymentController extends Controller
             return $enrollment;
         })->filter(fn($enrollment) => $enrollment['balance'] > 0)->values()->all();
 
-        $payments = collect($payments)->map(function ($payment) use ($enrollmentsById, $registrationsById, $targetName) {
+        $payments = collect($payments)->map(function ($payment) use ($enrollmentsById, $registrationsById, $targetName, $accountsById) {
             $enrollment = $enrollmentsById->get($payment['enrollment_id']);
             $payment['registration_id']  = $enrollment['registration_id'] ?? null;
             $payment['participant_name'] = $enrollment ? ($registrationsById->get($enrollment['registration_id'])['full_name'] ?? '—') : '—';
             $payment['enrollment_type']  = $enrollment['enrollment_type'] ?? null;
             $payment['program_id']       = $enrollment['program_id'] ?? null;
+            $payment['session_id']       = $enrollment['session_id'] ?? null;
             $payment['target_name']      = $enrollment ? $targetName($enrollment) : '—';
+            $payment['account_name']     = $accountsById->get($payment['account_id'] ?? null)['name_en'] ?? '—';
             return $payment;
         })->values()->all();
 
@@ -87,6 +99,11 @@ class PaymentController extends Controller
             'enrollmentOptions'     => $enrollmentOptions,
             'registrations'         => $registrations,
             'programs'              => $programs,
+            'sessions'              => $sessions,
+            'accounts'              => $activeAccounts,
+            // Every account, not just active ones — a filter needs to be able
+            // to find payments against an account that's since been deactivated.
+            'allAccounts'           => collect($accounts)->values()->all(),
             'paymentMethods'        => ExpenseController::PAYMENT_METHODS,
             'preselectEnrollmentId' => $request->query('enrollment_id'),
         ]);
@@ -96,6 +113,7 @@ class PaymentController extends Controller
     {
         $validated = $request->validate([
             'enrollment_id'  => 'required|integer',
+            'account_id'     => 'required|integer',
             'amount'         => 'required|numeric|min:0.01',
             'payment_date'   => 'required|date',
             'payment_method' => 'required|in:' . implode(',', ExpenseController::PAYMENT_METHODS),
@@ -135,9 +153,35 @@ class PaymentController extends Controller
         $payload['created_by'] = config('admin.username');
 
         try {
-            $this->supabase->insertPayment($payload);
+            $payment = $this->supabase->insertPayment($payload);
         } catch (\RuntimeException $e) {
             return back()->withInput()->with('error', 'Could not record payment.');
+        }
+
+        // Every Payment must have a matching ledger Transaction — if this fails,
+        // undo the just-inserted Payment (it has no Transaction yet, so it's
+        // still safe to delete) rather than leave money "paid" with no ledger
+        // entry behind it.
+        try {
+            $this->supabase->insertTransaction([
+                'account_id'      => (int) $validated['account_id'],
+                'direction'       => 'in',
+                'amount'          => $validated['amount'],
+                'date'            => $validated['payment_date'],
+                'category'        => 'payment_received',
+                'reference_type'  => 'payment',
+                'reference_id'    => (int) $payment['id'],
+                'note'            => $validated['notes'] ?? null,
+                'created_by'      => $payload['created_by'],
+            ]);
+        } catch (\RuntimeException $e) {
+            try {
+                $this->supabase->deletePayment((int) $payment['id']);
+            } catch (\RuntimeException $e2) {
+                // Fall through — the error message below still surfaces the
+                // ledger failure either way.
+            }
+            return back()->withInput()->with('error', 'Could not record payment: the ledger entry failed, so the payment was rolled back.');
         }
 
         try {
@@ -156,6 +200,16 @@ class PaymentController extends Controller
             $payment = $this->supabase->getPayment($id);
         } catch (\RuntimeException $e) {
             $payment = null;
+        }
+
+        try {
+            $linkedTransactions = $this->supabase->getTransactionsForReference('payment', $id);
+        } catch (\RuntimeException $e) {
+            return back()->with('error', 'Could not verify the ledger before deleting.');
+        }
+
+        if (count($linkedTransactions) > 0) {
+            return back()->with('error', 'This payment has a ledger entry and cannot be deleted. Post a reversing transaction instead.');
         }
 
         try {

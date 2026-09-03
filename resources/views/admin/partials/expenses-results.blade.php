@@ -19,7 +19,7 @@ $cols = [
 'amount' => 'Amount',
 'payment_method' => 'Payment Method',
 ];
-$fixed = ['Description', 'Actions'];
+$fixed = ['Description', 'Funding', 'Actions'];
 $isFiltered = $search !== '' || $categoryId !== '' || $vendorId !== '' || $paymentMethod !== '' || $dateFrom !== '' || $dateTo !== '';
 
 if (!function_exists('sortUrl')) {
@@ -68,7 +68,14 @@ return $currentDir === 'asc'
                 <td data-label="Vendor">{{ $expense['vendor_name'] ?? '—' }}</td>
                 <td data-label="Amount" style="font-weight: 700;">{{ number_format((float) ($expense['amount'] ?? 0), 2) }}</td>
                 <td data-label="Payment Method">{{ $expense['payment_method'] ?? '—' }}</td>
-                <td data-label="Description">{{ $expense['description'] ?? '—' }}</td>
+                <td data-label="Description">
+                    @if(!empty($expense['description']))
+                    <span class="text-truncate" title="{{ $expense['description'] }}">{{ $expense['description'] }}</span>
+                    @else
+                    —
+                    @endif
+                </td>
+                <td data-label="Funding">{{ $expense['funding_label'] ?? '—' }}</td>
                 <td data-label="Actions">
                     <div class="row-actions">
                         <button type="button" class="btn-icon edit-expense-btn"
@@ -79,6 +86,9 @@ return $currentDir === 'asc'
                             data-amount="{{ $expense['amount'] }}"
                             data-payment-method="{{ $expense['payment_method'] }}"
                             data-description="{{ $expense['description'] }}"
+                            data-funding-type="{{ $expense['funding_type'] }}"
+                            data-funding-account-id="{{ $expense['funding_account_id'] }}"
+                            data-funding-member-id="{{ $expense['funding_member_id'] ?? '' }}"
                             title="Edit">&#9998;</button>
                         <form method="POST" action="{{ route('admin.expenses.destroy', $expense['id']) }}"
                             onsubmit="return confirm('Delete this expense? This cannot be undone.');" style="display:inline;">
@@ -97,7 +107,7 @@ return $currentDir === 'asc'
                     Total{{ $isFiltered ? ' (filtered)' : '' }}
                 </td>
                 <td data-label="Total Amount" style="font-weight: 800;">{{ number_format($totalAmount, 2) }}</td>
-                <td colspan="3" class="tfoot-spacer"></td>
+                <td colspan="4" class="tfoot-spacer"></td>
             </tr>
         </tfoot>
     </table>

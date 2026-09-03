@@ -50,12 +50,16 @@
                             data-price="{{ $session['price'] }}"
                             data-description="{{ $session['description'] }}"
                             title="Edit">&#9998;</button>
+                        @if($session['in_use'])
+                        <button type="button" class="btn-icon btn-icon-danger" disabled title="This session has existing enrollments and cannot be deleted">&#128465;</button>
+                        @else
                         <form method="POST" action="{{ route('admin.sessions.destroy', $session['id']) }}"
                             onsubmit="return confirm('Delete session &quot;{{ $session['name'] }}&quot;? This cannot be undone.');" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-icon btn-icon-danger" title="Delete">&#128465;</button>
                         </form>
+                        @endif
                     </div>
                 </td>
             </tr>
@@ -129,6 +133,12 @@
 
         function closeModal() {
             overlay.classList.remove('open');
+            clearErrors();
+        }
+
+        function clearErrors() {
+            form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+            form.querySelectorAll('.error-msg').forEach(function (el) { el.remove(); });
         }
 
         function resetForm() {

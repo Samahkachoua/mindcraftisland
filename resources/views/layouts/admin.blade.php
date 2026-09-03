@@ -69,6 +69,22 @@
                 <span class="admin-nav-icon">&#128179;</span>
                 <span class="admin-nav-label">Payments</span>
             </a>
+            <a href="{{ route('admin.members') }}" class="admin-nav-link {{ request()->routeIs('admin.members') ? 'active' : '' }}" title="Members">
+                <span class="admin-nav-icon">&#129309;</span>
+                <span class="admin-nav-label">Members</span>
+            </a>
+            <a href="{{ route('admin.rental-items') }}" class="admin-nav-link {{ request()->routeIs('admin.rental-items') ? 'active' : '' }}" title="Rental Items">
+                <span class="admin-nav-icon">&#127919;</span>
+                <span class="admin-nav-label">Rental Items</span>
+            </a>
+            <a href="{{ route('admin.rentals') }}" class="admin-nav-link {{ request()->routeIs('admin.rentals') ? 'active' : '' }}" title="Rentals">
+                <span class="admin-nav-icon">&#128230;</span>
+                <span class="admin-nav-label">Rentals</span>
+            </a>
+            <a href="{{ route('admin.accounts') }}" class="admin-nav-link {{ request()->routeIs('admin.accounts') ? 'active' : '' }}" title="Accounts">
+                <span class="admin-nav-icon">&#127974;</span>
+                <span class="admin-nav-label">Accounts</span>
+            </a>
         </nav>
     </aside>
 

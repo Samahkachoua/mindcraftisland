@@ -456,6 +456,21 @@ textarea.is-invalid {
     color: var(--coral);
 }
 
+.btn-icon:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.text-truncate {
+    display: inline-block;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
 /* ── Table ───────────────────────────────────────────────── */
 .table-wrapper {
     overflow-x: auto;

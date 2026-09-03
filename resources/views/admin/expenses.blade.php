@@ -59,6 +59,7 @@
         <input type="hidden" name="sort" value="{{ $sort }}">
         <input type="hidden" name="direction" value="{{ $direction }}">
         <button type="submit" class="btn btn-secondary" style="padding: 0.62rem 1.25rem; font-size: 0.92rem;">Filter</button>
+        <button type="button" class="btn btn-secondary" id="expenses-filter-clear-all" style="padding: 0.62rem 1.25rem; font-size: 0.92rem;">Clear Filters</button>
     </form>
 </div>
 
@@ -131,6 +132,42 @@
                     @enderror
                 </div>
                 <div class="form-group">
+                    <label for="expense-funding-type">Funded By</label>
+                    <select id="expense-funding-type" name="funding_type" required class="{{ $errors->has('funding_type') ? 'is-invalid' : '' }}">
+                        <option value="" disabled selected>Select who funded this…</option>
+                        @foreach($fundingTypes as $type)
+                        <option value="{{ $type }}">{{ ucfirst($type) }}</option>
+                        @endforeach
+                    </select>
+                    @error('funding_type')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group" id="expense-funding-account-group">
+                    <label for="expense-funding-account">Funding Account</label>
+                    <select id="expense-funding-account" name="funding_account_id" class="{{ $errors->has('funding_account_id') ? 'is-invalid' : '' }}">
+                        <option value="" disabled selected>Select an account…</option>
+                        @foreach($accounts as $account)
+                        <option value="{{ $account['id'] }}">{{ $account['label'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('funding_account_id')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group" id="expense-funding-member-group">
+                    <label for="expense-funding-member">Funding Member</label>
+                    <select id="expense-funding-member" name="funding_member_id" class="{{ $errors->has('funding_member_id') ? 'is-invalid' : '' }}">
+                        <option value="" disabled selected>Select a member…</option>
+                        @foreach($members as $member)
+                        <option value="{{ $member['id'] }}">{{ $member['name'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('funding_member_id')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
                     <label for="expense-description">Description</label>
                     <textarea id="expense-description" name="description" rows="3" maxlength="500" class="{{ $errors->has('description') ? 'is-invalid' : '' }}"></textarea>
                     @error('description')
@@ -183,21 +220,38 @@
                 .then(function (html) {
                     panel.innerHTML = html;
                     syncFormFromUrl(url);
+                    // Keep the address bar bare — no filter/sort/page params ever
+                    // show up in the URL, by design.
                     window.history.replaceState(null, '', expensesUrl);
                 });
+        }
+
+        function submitFilters() {
+            var params = new URLSearchParams(new FormData(form));
+            params.set('page', '1');
+            loadUrl(expensesUrl + '?' + params.toString());
         }
 
         if (form) {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                var params = new URLSearchParams(new FormData(form));
-                params.set('page', '1');
-                loadUrl(expensesUrl + '?' + params.toString());
+                submitFilters();
             });
         }
 
         if (clearBtn) {
+            // Only clears the search text — matches its "×" position inside the
+            // search box, unlike the "Clear Filters" button which resets everything.
             clearBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                searchInput.value = '';
+                submitFilters();
+            });
+        }
+
+        var clearAllBtn = document.getElementById('expenses-filter-clear-all');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 loadUrl(expensesUrl);
             });
@@ -223,6 +277,26 @@
         var amountField = document.getElementById('expense-amount');
         var paymentField = document.getElementById('expense-payment-method');
         var descriptionField = document.getElementById('expense-description');
+        var fundingTypeField = document.getElementById('expense-funding-type');
+        var fundingAccountField = document.getElementById('expense-funding-account');
+        var fundingAccountGroup = document.getElementById('expense-funding-account-group');
+        var fundingMemberField = document.getElementById('expense-funding-member');
+        var fundingMemberGroup = document.getElementById('expense-funding-member-group');
+
+        function syncFundingAccountVisibility() {
+            var isAccount = fundingTypeField.value === 'account';
+            var isMember = fundingTypeField.value === 'member';
+
+            fundingAccountGroup.style.display = isAccount ? '' : 'none';
+            fundingAccountField.required = isAccount;
+            if (!isAccount) fundingAccountField.value = '';
+
+            fundingMemberGroup.style.display = isMember ? '' : 'none';
+            fundingMemberField.required = isMember;
+            if (!isMember) fundingMemberField.value = '';
+        }
+
+        fundingTypeField.addEventListener('change', syncFundingAccountVisibility);
 
         function openModal() {
             overlay.classList.add('open');
@@ -230,6 +304,12 @@
 
         function closeModal() {
             overlay.classList.remove('open');
+            clearErrors();
+        }
+
+        function clearErrors() {
+            expenseForm.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+            expenseForm.querySelectorAll('.error-msg').forEach(function (el) { el.remove(); });
         }
 
         function resetForm() {
@@ -239,6 +319,10 @@
             amountField.value = '';
             paymentField.value = '';
             descriptionField.value = '';
+            fundingTypeField.value = '';
+            fundingAccountField.value = '';
+            fundingMemberField.value = '';
+            syncFundingAccountVisibility();
         }
 
         function openForAdd() {
@@ -259,6 +343,10 @@
             amountField.value = btn.dataset.amount;
             paymentField.value = btn.dataset.paymentMethod;
             descriptionField.value = btn.dataset.description;
+            fundingTypeField.value = btn.dataset.fundingType;
+            syncFundingAccountVisibility();
+            if (btn.dataset.fundingType === 'account') fundingAccountField.value = btn.dataset.fundingAccountId;
+            if (btn.dataset.fundingType === 'member') fundingMemberField.value = btn.dataset.fundingMemberId;
             openModal();
         }
 
@@ -284,7 +372,12 @@
             if (old.amount) amountField.value = old.amount;
             if (old.payment_method) paymentField.value = old.payment_method;
             if (old.description) descriptionField.value = old.description;
+            if (old.funding_type) fundingTypeField.value = old.funding_type;
+            syncFundingAccountVisibility();
+            if (old.funding_account_id) fundingAccountField.value = old.funding_account_id;
+            if (old.funding_member_id) fundingMemberField.value = old.funding_member_id;
         }
+
     });
 </script>
 @endpush

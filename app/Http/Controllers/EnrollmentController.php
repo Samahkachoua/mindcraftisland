@@ -46,6 +46,16 @@ class EnrollmentController extends Controller
             $payments = [];
         }
 
+        try {
+            $accounts = $this->supabase->getAllAccounts();
+        } catch (\RuntimeException $e) {
+            $accounts = [];
+        }
+
+        $activeAccounts = collect($accounts)->where('is_active', true)
+            ->map(fn($a) => $a + ['label' => AccountController::optionLabel($a)])
+            ->values()->all();
+
         $registrationsById = collect($registrations)->keyBy('id');
         $programsById      = collect($programs)->keyBy('id');
         $sessionsById      = collect($sessions)->keyBy('id');
@@ -59,6 +69,7 @@ class EnrollmentController extends Controller
                 ? ($programsById->get($enrollment['program_id'])['name'] ?? '—')
                 : ($sessionsById->get($enrollment['session_id'])['name'] ?? '—');
             $enrollment['amount_paid'] = $paidByEnrollment->get($enrollment['id'], 0.0);
+            $enrollment['has_payments'] = $paidByEnrollment->has($enrollment['id']);
             $enrollment['total'] = (float) $enrollment['price'] - (float) ($enrollment['discount_amount'] ?? 0);
             $enrollment['balance'] = $enrollment['total'] - $enrollment['amount_paid'];
             // Nothing owed is always "paid", regardless of the stored payment_status
@@ -81,6 +92,7 @@ class EnrollmentController extends Controller
             'registrations'   => $registrations,
             'programs'        => $programs,
             'sessions'        => $sessions,
+            'accounts'        => $activeAccounts,
             'enrollmentTypes' => self::ENROLLMENT_TYPES,
             'paymentMethods'  => ExpenseController::PAYMENT_METHODS,
         ]);

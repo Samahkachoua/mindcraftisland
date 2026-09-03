@@ -18,6 +18,19 @@ class CategoryController extends Controller
             session()->flash('error', 'Could not load categories: ' . $e->getMessage());
         }
 
+        try {
+            $expenses = $this->supabase->getAllExpenses();
+        } catch (\RuntimeException $e) {
+            $expenses = [];
+        }
+
+        $usedCategoryIds = collect($expenses)->pluck('category_id')->unique()->all();
+
+        $categories = collect($categories)->map(function ($category) use ($usedCategoryIds) {
+            $category['in_use'] = in_array($category['id'], $usedCategoryIds, true);
+            return $category;
+        })->all();
+
         return view('admin.categories', [
             'categories' => $categories,
             'total'      => count($categories),

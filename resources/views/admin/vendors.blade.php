@@ -46,12 +46,16 @@
                             data-id="{{ $vendor['id'] }}"
                             data-name="{{ $vendor['name'] }}"
                             title="Edit">&#9998;</button>
+                        @if($vendor['in_use'])
+                        <button type="button" class="btn-icon btn-icon-danger" disabled title="This vendor is used by existing expenses and cannot be deleted">&#128465;</button>
+                        @else
                         <form method="POST" action="{{ route('admin.vendors.destroy', $vendor['id']) }}"
                             onsubmit="return confirm('Delete vendor &quot;{{ $vendor['name'] }}&quot;? This cannot be undone.');" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-icon btn-icon-danger" title="Delete">&#128465;</button>
                         </form>
+                        @endif
                     </div>
                 </td>
             </tr>
@@ -109,6 +113,13 @@
 
         function closeModal() {
             overlay.classList.remove('open');
+            clearErrors();
+        }
+
+        function clearErrors() {
+            nameInput.classList.remove('is-invalid');
+            var errorSpan = form.querySelector('.error-msg');
+            if (errorSpan) errorSpan.remove();
         }
 
         function openForAdd() {

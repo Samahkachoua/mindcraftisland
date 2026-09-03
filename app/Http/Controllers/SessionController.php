@@ -18,6 +18,19 @@ class SessionController extends Controller
             session()->flash('error', 'Could not load sessions: ' . $e->getMessage());
         }
 
+        try {
+            $enrollments = $this->supabase->getAllEnrollments();
+        } catch (\RuntimeException $e) {
+            $enrollments = [];
+        }
+
+        $usedSessionIds = collect($enrollments)->pluck('session_id')->filter()->unique()->all();
+
+        $sessions = collect($sessions)->map(function ($session) use ($usedSessionIds) {
+            $session['in_use'] = in_array($session['id'], $usedSessionIds, true);
+            return $session;
+        })->all();
+
         return view('admin.sessions', [
             'sessions' => $sessions,
             'total'    => count($sessions),

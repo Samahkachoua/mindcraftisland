@@ -32,7 +32,8 @@
      rows below — nothing here ever becomes a URL query parameter, so
      filtering/pagination state never touches the address bar or reloads. --}}
 <div class="search-bar" style="flex-wrap: wrap;">
-    <input type="date" id="enrollments-filter-start-date" class="search-input" style="max-width: 170px;" title="Filter by date (program start date or session date)">
+    <input type="date" id="enrollments-filter-date-from" class="search-input" style="max-width: 170px;" title="From date (program start date or session date)">
+    <input type="date" id="enrollments-filter-date-to" class="search-input" style="max-width: 170px;" title="To date (program start date or session date)">
     <select id="enrollments-filter-program" class="search-input" style="max-width: 200px;">
         <option value="">Program</option>
         @foreach($programs as $program)
@@ -134,12 +135,16 @@
                             title="Record Payment">&#128179;</button>
                         @endif
                         {{-- Nothing shown once the enrollment is fully paid — the Status column already covers that. --}}
+                        @if($enrollment['has_payments'])
+                        <button type="button" class="btn-icon btn-icon-danger" disabled title="This enrollment has recorded payments and cannot be deleted">&#128465;</button>
+                        @else
                         <form method="POST" action="{{ route('admin.enrollments.destroy', $enrollment['id']) }}"
                             onsubmit="return confirm('Delete this enrollment? This cannot be undone.');" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-icon btn-icon-danger" title="Delete">&#128465;</button>
                         </form>
+                        @endif
                     </div>
                 </td>
             </tr>
@@ -313,21 +318,42 @@
                 </p>
                 <div class="form-group">
                     <label for="pay-enrollment-amount">Amount</label>
-                    <input type="number" id="pay-enrollment-amount" name="amount" step="0.01" min="0.01" required>
+                    <input type="number" id="pay-enrollment-amount" name="amount" step="0.01" min="0.01" required class="{{ $errors->has('amount') ? 'is-invalid' : '' }}">
                     <p style="margin: 0.35rem 0 0; color: #8a9ab0; font-size: 0.82rem;">Remaining balance: <span id="pay-enrollment-balance"></span>. Defaults to the full remaining balance — lower it for a partial payment.</p>
+                    @error('amount')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="pay-enrollment-account">Account</label>
+                    <select id="pay-enrollment-account" name="account_id" required class="{{ $errors->has('account_id') ? 'is-invalid' : '' }}">
+                        <option value="" disabled selected>Select an account…</option>
+                        @foreach($accounts as $account)
+                        <option value="{{ $account['id'] }}">{{ $account['label'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('account_id')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="form-group">
                     <label for="pay-enrollment-date">Payment Date</label>
-                    <input type="date" id="pay-enrollment-date" name="payment_date" required>
+                    <input type="date" id="pay-enrollment-date" name="payment_date" required class="{{ $errors->has('payment_date') ? 'is-invalid' : '' }}">
+                    @error('payment_date')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="form-group">
                     <label for="pay-enrollment-method">Payment Method</label>
-                    <select id="pay-enrollment-method" name="payment_method" required>
+                    <select id="pay-enrollment-method" name="payment_method" required class="{{ $errors->has('payment_method') ? 'is-invalid' : '' }}">
                         <option value="" disabled selected>Select a payment method…</option>
                         @foreach($paymentMethods as $method)
                         <option value="{{ $method }}">{{ $method }}</option>
                         @endforeach
                     </select>
+                    @error('payment_method')
+                    <span class="error-msg">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="form-group">
                     <label for="pay-enrollment-notes">Notes</label>
@@ -381,6 +407,12 @@
 
         function closeAddModal() {
             addOverlay.classList.remove('open');
+            clearAddErrors();
+        }
+
+        function clearAddErrors() {
+            addForm.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+            addForm.querySelectorAll('.error-msg').forEach(function (el) { el.remove(); });
         }
 
         document.getElementById('add-enrollment-btn').addEventListener('click', function () {
@@ -459,9 +491,11 @@
         var payTarget = document.getElementById('pay-enrollment-target');
         var payBalanceLabel = document.getElementById('pay-enrollment-balance');
         var payAmount = document.getElementById('pay-enrollment-amount');
+        var payAccount = document.getElementById('pay-enrollment-account');
         var payDate = document.getElementById('pay-enrollment-date');
         var payMethod = document.getElementById('pay-enrollment-method');
         var payNotes = document.getElementById('pay-enrollment-notes');
+        var payForm = document.getElementById('pay-enrollment-form');
 
         function openPayModal() {
             payOverlay.classList.add('open');
@@ -469,6 +503,12 @@
 
         function closePayModal() {
             payOverlay.classList.remove('open');
+            clearPayErrors();
+        }
+
+        function clearPayErrors() {
+            payForm.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+            payForm.querySelectorAll('.error-msg').forEach(function (el) { el.remove(); });
         }
 
         function todayIso() {
@@ -487,6 +527,7 @@
                 payBalanceLabel.textContent = balance.toFixed(2);
                 payAmount.value = balance.toFixed(2);
                 payAmount.setAttribute('max', balance.toFixed(2));
+                payAccount.value = '';
                 payDate.value = todayIso();
                 payMethod.value = '';
                 payNotes.value = '';
@@ -506,6 +547,7 @@
         @if($errors->any() && old('enrollment_id'))
         payId.value = '{{ old('enrollment_id') }}';
         payAmount.value = '{{ old('amount') }}';
+        payAccount.value = '{{ old('account_id') }}';
         payDate.value = '{{ old('payment_date') }}';
         payMethod.value = '{{ old('payment_method') }}';
         payNotes.value = '{{ old('notes') }}';
@@ -518,7 +560,8 @@
         // here is ever sent as a URL query parameter or triggers a reload.
         var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr[data-enrollment-row]'));
         var noMatchRow = document.getElementById('enrollments-no-match-row');
-        var filterStartDate = document.getElementById('enrollments-filter-start-date');
+        var filterDateFrom = document.getElementById('enrollments-filter-date-from');
+        var filterDateTo = document.getElementById('enrollments-filter-date-to');
         var filterProgram = document.getElementById('enrollments-filter-program');
         var filterSession = document.getElementById('enrollments-filter-session');
         var filterStatus = document.getElementById('enrollments-filter-status');
@@ -533,7 +576,8 @@
         var currentPage = 1;
 
         function rowMatchesFilters(row) {
-            if (filterStartDate.value && row.dataset.startDate !== filterStartDate.value) return false;
+            if (filterDateFrom.value && row.dataset.startDate < filterDateFrom.value) return false;
+            if (filterDateTo.value && row.dataset.startDate > filterDateTo.value) return false;
             if (filterProgram.value && row.dataset.programId !== filterProgram.value) return false;
             if (filterSession.value && row.dataset.sessionId !== filterSession.value) return false;
             if (filterStatus.value && row.dataset.status !== filterStatus.value) return false;
@@ -569,7 +613,7 @@
             }
         }
 
-        [filterStartDate, filterProgram, filterSession, filterStatus].forEach(function (el) {
+        [filterDateFrom, filterDateTo, filterProgram, filterSession, filterStatus].forEach(function (el) {
             el.addEventListener('change', function () {
                 currentPage = 1;
                 renderEnrollments();
@@ -577,7 +621,8 @@
         });
 
         filterClear.addEventListener('click', function () {
-            filterStartDate.value = '';
+            filterDateFrom.value = '';
+            filterDateTo.value = '';
             filterProgram.value = '';
             filterSession.value = '';
             filterStatus.value = '';

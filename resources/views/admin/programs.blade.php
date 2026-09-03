@@ -56,12 +56,16 @@
                             data-program-price="{{ $program['program_price'] }}"
                             data-description="{{ $program['description'] }}"
                             title="Edit">&#9998;</button>
+                        @if($program['in_use'])
+                        <button type="button" class="btn-icon btn-icon-danger" disabled title="This program has existing enrollments and cannot be deleted">&#128465;</button>
+                        @else
                         <form method="POST" action="{{ route('admin.programs.destroy', $program['id']) }}"
                             onsubmit="return confirm('Delete program &quot;{{ $program['name'] }}&quot;? This cannot be undone.');" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-icon btn-icon-danger" title="Delete">&#128465;</button>
                         </form>
+                        @endif
                     </div>
                 </td>
             </tr>
@@ -164,6 +168,12 @@
 
         function closeModal() {
             overlay.classList.remove('open');
+            clearErrors();
+        }
+
+        function clearErrors() {
+            form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
+            form.querySelectorAll('.error-msg').forEach(function (el) { el.remove(); });
         }
 
         function resetForm() {
