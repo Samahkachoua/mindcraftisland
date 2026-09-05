@@ -16,7 +16,7 @@
         <p class="page-subtitle">{{ $account['name_ar'] }}{{ $account['is_active'] ? '' : ' — Inactive' }}</p>
     </div>
     <div style="text-align: right;">
-        <p style="margin: 0; color: #8a9ab0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px;">Current Balance</p>
+        <p style="margin: 0; color: #8a9ab0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px;">Account Balance</p>
         <p style="margin: 0.15rem 0 0; font-size: 1.8rem; font-weight: 800; color: {{ ($balance ?? 0) < 0 ? '#c0392b' : '#1a8a4a' }};">
             {{ $balance !== null ? number_format((float) $balance, 2) : '—' }}
         </p>

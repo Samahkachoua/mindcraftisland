@@ -208,14 +208,21 @@ class PaymentController extends Controller
             return back()->with('error', 'Could not verify the ledger before deleting.');
         }
 
-        if (count($linkedTransactions) > 0) {
-            return back()->with('error', 'This payment has a ledger entry and cannot be deleted. Post a reversing transaction instead.');
+        // Ledger transactions are append-only everywhere except payments (see
+        // payments_delete_migration.sql) — delete the transaction(s) first so
+        // the payment's balance impact is fully unwound, not just orphaned.
+        foreach ($linkedTransactions as $transaction) {
+            try {
+                $this->supabase->deleteTransaction((int) $transaction['id']);
+            } catch (\RuntimeException $e) {
+                return back()->with('error', 'Could not delete the linked ledger entry — nothing was deleted.');
+            }
         }
 
         try {
             $this->supabase->deletePayment($id);
         } catch (\RuntimeException $e) {
-            return back()->with('error', 'Could not delete payment.');
+            return back()->with('error', 'Could not delete payment. It may still be linked to a rental — delete that first.');
         }
 
         if ($payment) {

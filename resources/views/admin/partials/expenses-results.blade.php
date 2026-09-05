@@ -91,7 +91,7 @@ return $currentDir === 'asc'
                             data-funding-member-id="{{ $expense['funding_member_id'] ?? '' }}"
                             title="Edit">&#9998;</button>
                         <form method="POST" action="{{ route('admin.expenses.destroy', $expense['id']) }}"
-                            onsubmit="return confirm('Delete this expense? This cannot be undone.');" style="display:inline;">
+                            onsubmit="return confirm('Delete this expense? Any ledger entry it posted (including amount corrections) will be deleted too. This cannot be undone.');" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-icon btn-icon-danger" title="Delete">&#128465;</button>

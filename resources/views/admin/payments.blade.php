@@ -115,7 +115,7 @@
                 <td data-label="Recorded By" style="color: #8a9ab0; font-size: 0.83rem;">{{ $payment['created_by'] ?? '—' }}</td>
                 <td data-label="Actions">
                     <form method="POST" action="{{ route('admin.payments.destroy', $payment['id']) }}"
-                        onsubmit="return confirm('Delete this payment? The enrollment\'s payment status will be recalculated. This cannot be undone.');" style="display:inline;">
+                        onsubmit="return confirm('Delete this payment? Its ledger entry will be deleted too and the enrollment\'s payment status will be recalculated. This cannot be undone.');" style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-icon btn-icon-danger" title="Delete">&#128465;</button>

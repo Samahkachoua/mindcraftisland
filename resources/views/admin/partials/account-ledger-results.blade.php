@@ -1,3 +1,28 @@
+{{-- These three reflect the currently applied filters and reconcile as
+     Opening + Current = Overall. Opening Balance is the running balance
+     immediately before date_from (carrying forward everything earlier),
+     falling back to the account's real opening_balance when there's no
+     date_from or nothing before it. Current Balance is the net movement of
+     just the filtered/visible transactions. Overall Balance is the running
+     balance as of the last filtered transaction (already correctly
+     includes any activity from before the filtered window, since
+     running_balance is always computed over the account's complete
+     history). --}}
+<div class="stats-bar">
+    <div class="stat-card">
+        <div class="stat-value" style="color: {{ $openingBalance < 0 ? '#c0392b' : 'var(--coral)' }};">{{ number_format($openingBalance, 2) }}</div>
+        <div class="stat-label">Opening Balance</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: {{ $currentBalance < 0 ? '#c0392b' : 'var(--coral)' }};">{{ number_format($currentBalance, 2) }}</div>
+        <div class="stat-label">Current Balance (filtered)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: {{ ($overallBalance ?? 0) < 0 ? '#c0392b' : 'var(--coral)' }};">{{ $overallBalance !== null ? number_format($overallBalance, 2) : '—' }}</div>
+        <div class="stat-label">Overall Balance (as of filter)</div>
+    </div>
+</div>
+
 @if($transactions->total() === 0)
 <div class="card empty-state">
     <div class="empty-icon">&#128220;</div>

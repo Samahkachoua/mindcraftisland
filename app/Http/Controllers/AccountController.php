@@ -113,6 +113,35 @@ class AccountController extends Controller
             ->when(in_array($category, self::CATEGORIES, true), fn($c) => $c->filter(fn($t) => $t['category'] === $category))
             ->values();
 
+        // Two stats over the WHOLE filtered set (not just the current page,
+        // so they don't shift as you paginate through the same filter):
+        //   - currentBalance: net movement of just the filtered rows
+        //     (sum of in minus sum of out) — doesn't include opening_balance
+        //     or anything outside the filter.
+        //   - overallBalance: the running balance as of the last filtered
+        //     row. Since running_balance is always computed over the
+        //     account's complete history (never re-derived per filter), this
+        //     correctly carries forward any activity from before the
+        //     filtered window — not a second balance calculation, just
+        //     reading the already-computed value off the last visible row.
+        $currentBalance = $displayed->sum(fn($t) => $t['direction'] === 'in' ? (float) $t['amount'] : -(float) $t['amount']);
+        $overallBalance = $displayed->last()['running_balance'] ?? null;
+
+        // Opening Balance for this view: when a date_from filter narrows
+        // where the view starts, it's the running balance immediately
+        // before that date — carrying forward everything that happened
+        // earlier — not the account's static opening_balance column.
+        // Otherwise Opening + Current wouldn't reconcile to Overall once a
+        // date filter cuts off part of the history. Falls back to the real
+        // opening_balance when there's no date_from, or nothing before it.
+        $openingBalance = (float) $account['opening_balance'];
+        if ($dateFrom !== '') {
+            $priorTransaction = collect($transactions)->last(fn($t) => $t['date'] < $dateFrom);
+            if ($priorTransaction) {
+                $openingBalance = $priorTransaction['running_balance'];
+            }
+        }
+
         // Paginate — order stays oldest-to-newest within each page (per the
         // confirmed screen design: running balance reads top-to-bottom
         // naturally), pagination just chunks that same order.
@@ -130,15 +159,18 @@ class AccountController extends Controller
         ))->appends($request->except('page'));
 
         $viewData = [
-            'account'      => $account,
-            'balance'      => $balanceRow['balance'] ?? null,
-            'transactions' => $paginator,
-            'dateFrom'     => $dateFrom,
-            'dateTo'       => $dateTo,
-            'direction'    => $direction,
-            'category'     => $category,
-            'directions'   => self::DIRECTIONS,
-            'categories'   => self::CATEGORIES,
+            'account'        => $account,
+            'balance'        => $balanceRow['balance'] ?? null,
+            'openingBalance' => $openingBalance,
+            'currentBalance' => $currentBalance,
+            'overallBalance' => $overallBalance,
+            'transactions'   => $paginator,
+            'dateFrom'       => $dateFrom,
+            'dateTo'         => $dateTo,
+            'direction'      => $direction,
+            'category'       => $category,
+            'directions'     => self::DIRECTIONS,
+            'categories'     => self::CATEGORIES,
         ];
 
         if ($request->ajax()) {
@@ -266,16 +298,15 @@ class AccountController extends Controller
             return back()->withInput()->with('error', 'Could not verify the ledger before updating.');
         }
 
-        // Once an account has ledger history, its type and opening_balance
-        // are locked — editing either would silently rewrite the derived
-        // balance's history. name_en/name_ar/is_active stay editable.
-        if (count($linkedTransactions) > 0) {
-            $lockedFieldsChanged = $validated['type'] !== $current['type']
-                || (float) $validated['opening_balance'] !== (float) $current['opening_balance'];
-
-            if ($lockedFieldsChanged) {
-                return back()->withInput()->with('error', 'This account has ledger history — its type and opening balance can no longer change.');
-            }
+        // Once an account has ledger history, its type is locked — accounts
+        // and transactions don't carry a "this happened as a bank account,
+        // this as cash" split, so switching type after transactions exist
+        // would misdescribe them. opening_balance stays editable throughout
+        // (e.g. correcting what the account actually held before tracking
+        // began) — every Transaction is untouched either way, only the
+        // starting point of the derived balance shifts.
+        if (count($linkedTransactions) > 0 && $validated['type'] !== $current['type']) {
+            return back()->withInput()->with('error', 'This account has ledger history — its type can no longer change.');
         }
 
         try {

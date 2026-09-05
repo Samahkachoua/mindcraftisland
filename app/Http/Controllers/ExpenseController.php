@@ -213,29 +213,50 @@ class ExpenseController extends Controller
         // Member-funded expenses have no ledger entry to key off of, but lock
         // immediately too — there's no separate "recording" step any more,
         // so a member-funded expense is just as settled the instant it's
-        // created. Only the description can still be corrected either way.
+        // created. Description and amount can still be corrected either
+        // way; every other financial fact stays locked. A corrected amount
+        // on an account-funded expense posts a reconciling adjustment
+        // Transaction rather than editing the original entry (which is
+        // append-only) — a member-funded expense has no Transaction to
+        // reconcile, so its amount just updates directly.
         $isLocked = count($linkedTransactions) > 0 || $current['funding_type'] === 'member';
 
         if ($isLocked) {
             $lockedFieldsChanged = (string) $validated['category_id'] !== (string) $current['category_id']
                 || (string) $validated['vendor_id'] !== (string) $current['vendor_id']
                 || $validated['expense_date'] !== $current['expense_date']
-                || (float) $validated['amount'] !== (float) $current['amount']
                 || $validated['payment_method'] !== $current['payment_method']
                 || $validated['funding_type'] !== $current['funding_type']
                 || (string) ($validated['funding_account_id'] ?? '') !== (string) ($current['funding_account_id'] ?? '')
                 || (string) ($validated['funding_member_id'] ?? '') !== (string) ($current['funding_member_id'] ?? '');
 
             if ($lockedFieldsChanged) {
-                return back()->withInput()->with('error', 'This expense is settled and can only have its description edited.');
+                return back()->withInput()->with('error', 'This expense is settled — only its description and amount can still be corrected.');
             }
 
+            $amountChanged = (float) $validated['amount'] !== (float) $current['amount'];
+
             try {
-                $this->supabase->updateExpense($id, ['description' => $validated['description'] ?? null]);
-                return back()->with('success', 'Expense updated.');
+                $this->supabase->updateExpense($id, [
+                    'description' => $validated['description'] ?? null,
+                    'amount'      => $validated['amount'],
+                    'paid_amount' => $validated['amount'],
+                ]);
             } catch (\RuntimeException $e) {
                 return back()->withInput()->with('error', 'Could not update expense.');
             }
+
+            $delta = round((float) $validated['amount'] - (float) $current['amount'], 2);
+
+            if ($amountChanged && count($linkedTransactions) > 0 && abs($delta) >= 0.01) {
+                try {
+                    $this->postAmountAdjustment($id, (int) $current['funding_account_id'], $delta, (float) $current['amount'], (float) $validated['amount']);
+                } catch (\RuntimeException $e) {
+                    return back()->with('error', 'Expense amount was updated, but posting the ledger adjustment failed. Please check the Accounts ledger and fix this manually.');
+                }
+            }
+
+            return back()->with('success', 'Expense updated.');
         }
 
         $validated['paid_amount'] = $validated['amount'];
@@ -265,8 +286,17 @@ class ExpenseController extends Controller
             return back()->with('error', 'Could not verify the ledger before deleting.');
         }
 
-        if (count($linkedTransactions) > 0) {
-            return back()->with('error', 'This expense has a ledger entry and cannot be deleted. Post a reversing transaction instead.');
+        // Ledger transactions are append-only everywhere except payments and
+        // expenses (see expenses_delete_migration.sql) — delete every
+        // transaction referencing this expense first (the original entry
+        // plus any amount-correction adjustments from update()) so the
+        // expense's balance impact is fully unwound, not just orphaned.
+        foreach ($linkedTransactions as $transaction) {
+            try {
+                $this->supabase->deleteTransaction((int) $transaction['id']);
+            } catch (\RuntimeException $e) {
+                return back()->with('error', 'Could not delete the linked ledger entry — nothing was deleted.');
+            }
         }
 
         try {
@@ -288,6 +318,26 @@ class ExpenseController extends Controller
             'reference_type' => 'expense',
             'reference_id'   => $expenseId,
             'note'           => $validated['description'] ?? null,
+            'created_by'     => config('admin.username'),
+        ]);
+    }
+
+    // Reconciles a corrected amount against the original (append-only)
+    // Transaction: an increase means more actually went out, so an extra
+    // 'out' posts for the difference; a decrease posts an 'in' for the
+    // difference, as if that portion came back. Dated today (when the
+    // correction happens), not the expense's original date.
+    private function postAmountAdjustment(int $expenseId, int $accountId, float $delta, float $oldAmount, float $newAmount): void
+    {
+        $this->supabase->insertTransaction([
+            'account_id'     => $accountId,
+            'direction'      => $delta > 0 ? 'out' : 'in',
+            'amount'         => abs($delta),
+            'date'           => now('Asia/Beirut')->toDateString(),
+            'category'       => 'adjustment',
+            'reference_type' => 'expense',
+            'reference_id'   => $expenseId,
+            'note'           => 'Amount correction: ' . number_format($oldAmount, 2) . ' → ' . number_format($newAmount, 2),
             'created_by'     => config('admin.username'),
         ]);
     }
