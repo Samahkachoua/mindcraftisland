@@ -30,7 +30,11 @@
 <div class="alert alert-error"><span>&#9888;</span><span>{{ session('error') }}</span></div>
 @endif
 
-<form method="GET" action="{{ route('admin.accounts.show', $account['id']) }}" class="search-bar" style="flex-wrap: wrap;" id="ledger-filter-form">
+@php
+$ledgerFiltered = $dateFrom !== '' || $dateTo !== '' || $direction !== '' || $category !== '';
+@endphp
+<button type="button" class="btn btn-secondary advanced-search-toggle" id="ledger-advanced-toggle">{{ $ledgerFiltered ? 'Hide Filters' : 'Advanced Search' }}</button>
+<form method="GET" action="{{ route('admin.accounts.show', $account['id']) }}" class="search-bar {{ $ledgerFiltered ? '' : 'advanced-filters-collapsed' }}" style="flex-wrap: wrap;" id="ledger-filter-form">
     <input type="date" name="date_from" class="search-input" style="max-width: 160px;" value="{{ $dateFrom }}" title="From date">
     <input type="date" name="date_to" class="search-input" style="max-width: 160px;" value="{{ $dateTo }}" title="To date">
     <select name="direction" class="search-input" style="max-width: 150px;">
@@ -111,6 +115,15 @@
             e.preventDefault();
             loadUrl(link.href);
         });
+
+        var advancedToggle = document.getElementById('ledger-advanced-toggle');
+        if (advancedToggle) {
+            advancedToggle.addEventListener('click', function () {
+                form.classList.toggle('advanced-filters-collapsed');
+                var collapsed = form.classList.contains('advanced-filters-collapsed');
+                advancedToggle.textContent = collapsed ? 'Advanced Search' : 'Hide Filters';
+            });
+        }
     });
 </script>
 @endpush

@@ -275,6 +275,9 @@ textarea {
 input[type="date"] {
     line-height: 1.1;
     min-height: calc(1rem + 1em);
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
 }
 
 input:focus,
@@ -577,6 +580,14 @@ tfoot td {
     margin-bottom: 1.25rem;
 }
 
+.advanced-search-toggle {
+    margin-bottom: 1rem;
+}
+
+.search-bar.advanced-filters-collapsed {
+    display: none;
+}
+
 .search-input-wrap {
     position: relative;
     flex: 1;
@@ -594,6 +605,22 @@ tfoot td {
     background-color: var(--white);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
+}
+
+/* Filter selects/date inputs default to a fixed pixel max-width inline
+   (set per-page) so they don't stretch absurdly wide on their own — but that
+   same fixed width stops them from filling the row on in-between (tablet)
+   screen sizes, leaving gaps or lopsided wrapping. Letting them grow/shrink
+   within a range makes every filter bar fill its available width smoothly
+   at any viewport size, not just the desktop and <600px extremes. */
+.search-bar .search-input {
+    flex: 1 1 160px;
+    max-width: 260px !important;
+}
+
+.search-input-wrap .search-input {
+    flex: none;
+    max-width: 100% !important;
 }
 
 .search-input:focus {
@@ -721,6 +748,15 @@ tfoot td {
     background: var(--white);
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(30,45,64,0.15);
+    /* Promotes this element to its own compositing layer — without it,
+       iOS Safari and some Android WebViews visually lag/drift a
+       position:fixed element during scroll instead of keeping it pinned,
+       since they otherwise redraw it lazily along with the page content. */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .admin-menu-toggle span {
@@ -745,6 +781,14 @@ tfoot td {
     box-shadow: 4px 0 20px rgba(30,45,64,0.12);
     transition: width 0.2s ease;
     overflow-y: auto;
+    /* Same compositing-layer promotion as .admin-menu-toggle — keeps this
+       pinned to the viewport instead of visually drifting during scroll
+       on iOS Safari / some Android WebViews. */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 [dir="rtl"] .admin-sidebar { left: auto; right: 0; box-shadow: -4px 0 20px rgba(30,45,64,0.12); }
@@ -947,6 +991,11 @@ tfoot td {
         pointer-events: none;
         transition: opacity 0.25s ease;
         z-index: 999;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        will-change: opacity;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
 
     .admin-sidebar-backdrop.open {
@@ -1201,13 +1250,20 @@ footer {
     [dir="rtl"] .whatsapp-fab { right: auto; left: 1rem; }
 
     /* Admin dashboard list */
-    .search-bar { flex-wrap: wrap; }
+    .search-bar { flex-wrap: wrap; gap: 0.6rem; }
     .search-input-wrap { flex-basis: 100%; max-width: none; }
-    .search-bar select.search-input { flex: 1; max-width: none !important; }
+    .search-bar .search-input,
+    .search-bar .btn {
+        flex: 1 1 100%;
+        max-width: none !important;
+        width: 100%;
+    }
 
     .table-wrapper { overflow-x: visible; border: none; box-shadow: none; }
 
     table, thead, tbody, tfoot, th, tr, td { display: block; }
+
+    table { background: none; }
 
     thead { display: none; }
 
@@ -1266,4 +1322,10 @@ footer {
 
     [dir="rtl"] tbody td { text-align: left; }
     [dir="rtl"] tbody td::before { text-align: right; }
+
+    input[type="date"] {
+        padding-left: 0.6rem;
+        padding-right: 0.5rem;
+        font-size: 0.92rem;
+    }
 }

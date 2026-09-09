@@ -23,7 +23,11 @@
 @endif
 
 {{-- Filters --}}
-<div class="search-bar" style="flex-wrap: wrap;">
+@php
+$expensesFiltered = $search !== '' || $categoryId !== '' || $vendorId !== '' || $paymentMethod !== '' || $dateFrom !== '' || $dateTo !== '';
+@endphp
+<button type="button" class="btn btn-secondary advanced-search-toggle" id="expenses-advanced-toggle">{{ $expensesFiltered ? 'Hide Filters' : 'Advanced Search' }}</button>
+<div class="search-bar {{ $expensesFiltered ? '' : 'advanced-filters-collapsed' }}" style="flex-wrap: wrap;" id="expenses-search-bar">
     <form method="GET" action="{{ route('admin.expenses') }}" id="expenses-filter-form" style="display:contents;">
         <div class="search-input-wrap">
             <input
@@ -263,6 +267,16 @@
             e.preventDefault();
             loadUrl(link.href);
         });
+
+        var advancedToggle = document.getElementById('expenses-advanced-toggle');
+        var searchBar = document.getElementById('expenses-search-bar');
+        if (advancedToggle && searchBar) {
+            advancedToggle.addEventListener('click', function () {
+                searchBar.classList.toggle('advanced-filters-collapsed');
+                var collapsed = searchBar.classList.contains('advanced-filters-collapsed');
+                advancedToggle.textContent = collapsed ? 'Advanced Search' : 'Hide Filters';
+            });
+        }
 
         // ── Add / Edit modal ────────────────────────────────
         var overlay = document.getElementById('expense-modal-overlay');

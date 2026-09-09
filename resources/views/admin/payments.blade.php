@@ -30,7 +30,8 @@
 @else
 {{-- Filters are applied entirely client-side against the already-rendered
      rows below — nothing here is ever sent as a URL query parameter. --}}
-<div class="search-bar" style="flex-wrap: wrap;">
+<button type="button" class="btn btn-secondary advanced-search-toggle" id="payments-advanced-toggle">Advanced Search</button>
+<div class="search-bar advanced-filters-collapsed" style="flex-wrap: wrap;" id="payments-search-bar">
     <select id="payments-filter-program" class="search-input" style="max-width: 200px;">
         <option value="">Program</option>
         @foreach($programs as $program)
@@ -313,6 +314,15 @@
         var filterMethod = document.getElementById('payments-filter-method');
         var filterAccount = document.getElementById('payments-filter-account');
         var filterClear = document.getElementById('payments-filter-clear');
+        var advancedToggle = document.getElementById('payments-advanced-toggle');
+        var searchBar = document.getElementById('payments-search-bar');
+        if (advancedToggle && searchBar) {
+            advancedToggle.addEventListener('click', function () {
+                searchBar.classList.toggle('advanced-filters-collapsed');
+                var collapsed = searchBar.classList.contains('advanced-filters-collapsed');
+                advancedToggle.textContent = collapsed ? 'Advanced Search' : 'Hide Filters';
+            });
+        }
         var totalSumEl = document.getElementById('payments-total-sum');
 
         function rowMatchesPaymentFilters(row) {

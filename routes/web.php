@@ -25,7 +25,7 @@ Route::get('/', fn() => redirect()->route('register'));
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/login', [AdminController::class, 'login'])->middleware('throttle:5,1')->name('admin.login.post');
 
 // Protected admin routes
 Route::middleware('admin')->group(function () {

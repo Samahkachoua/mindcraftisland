@@ -31,7 +31,8 @@
 {{-- Filters are applied entirely client-side against the already-rendered
      rows below — nothing here ever becomes a URL query parameter, so
      filtering/pagination state never touches the address bar or reloads. --}}
-<div class="search-bar" style="flex-wrap: wrap;">
+<button type="button" class="btn btn-secondary advanced-search-toggle" id="enrollments-advanced-toggle">Advanced Search</button>
+<div class="search-bar advanced-filters-collapsed" style="flex-wrap: wrap;" id="enrollments-search-bar">
     <input type="date" id="enrollments-filter-date-from" class="search-input" style="max-width: 170px;" title="From date (program start date or session date)">
     <input type="date" id="enrollments-filter-date-to" class="search-input" style="max-width: 170px;" title="To date (program start date or session date)">
     <select id="enrollments-filter-program" class="search-input" style="max-width: 200px;">
@@ -566,6 +567,15 @@
         var filterSession = document.getElementById('enrollments-filter-session');
         var filterStatus = document.getElementById('enrollments-filter-status');
         var filterClear = document.getElementById('enrollments-filter-clear');
+        var advancedToggle = document.getElementById('enrollments-advanced-toggle');
+        var searchBar = document.getElementById('enrollments-search-bar');
+        if (advancedToggle && searchBar) {
+            advancedToggle.addEventListener('click', function () {
+                searchBar.classList.toggle('advanced-filters-collapsed');
+                var collapsed = searchBar.classList.contains('advanced-filters-collapsed');
+                advancedToggle.textContent = collapsed ? 'Advanced Search' : 'Hide Filters';
+            });
+        }
         var totalSumEl = document.getElementById('enrollments-total-sum');
         var paidSumEl = document.getElementById('enrollments-paid-sum');
         var paginationBar = document.getElementById('enrollments-pagination-bar');

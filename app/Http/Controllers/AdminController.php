@@ -26,9 +26,12 @@ class AdminController extends Controller
         ]);
 
         $validUsername = config('admin.username');
-        $validPassword = config('admin.password');
+        $validHash     = config('admin.password_hash');
 
-        if ($request->username === $validUsername && $request->password === $validPassword) {
+        $usernameMatches = hash_equals((string) $validUsername, (string) $request->username);
+        $passwordMatches = $validHash && Hash::check($request->password, $validHash);
+
+        if ($usernameMatches && $passwordMatches) {
             $request->session()->put('admin_logged_in', true);
             $request->session()->regenerate();
             return redirect()->route('admin.dashboard');
@@ -101,7 +104,7 @@ class AdminController extends Controller
         }
 
         // Sort
-        $allowedSorts = ['full_name', 'date_of_birth', 'created_at', 'registration_type'];
+        $allowedSorts = ['registration_id', 'full_name', 'date_of_birth', 'created_at', 'registration_type'];
         $sort      = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
         $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
 

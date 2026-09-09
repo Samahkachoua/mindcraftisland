@@ -13,6 +13,7 @@
 
 @php
 $cols = [
+'registration_id' => 'ID',
 'full_name' => 'Full Name',
 'registration_type' => 'Registration Type',
 'date_of_birth' => 'Age',
@@ -56,7 +57,8 @@ return $currentDir === 'asc'
         <tbody>
             @foreach($registrations as $reg)
             <tr>
-                <td data-label="Full Name" style="font-weight: 700;">{{ $reg['full_name'] ?? '—' }}</td>
+                <td data-label="ID" style="color: #8a9ab0; font-weight: 700; white-space: nowrap;">{{ $reg['registration_id'] ?? '—' }}</td>
+                <td data-label="Full Name" style="font-weight: 700; white-space: nowrap;">{{ $reg['full_name'] ?? '—' }}</td>
                 <td data-label="Registration Type">{{ ucfirst($reg['registration_type'] ?? 'child') }}</td>
                 <td data-label="Age">
                     @if(isset($reg['date_of_birth']))
