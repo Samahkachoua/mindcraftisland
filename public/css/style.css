@@ -588,9 +588,13 @@ tfoot td {
     display: none;
 }
 
+/* Needs an explicit flex-basis: its sibling filters below use
+   "flex: 1 1 160px", so a basis of 0 would let the search box collapse to
+   almost nothing whenever the filter row gets crowded. */
 .search-input-wrap {
     position: relative;
-    flex: 1;
+    flex: 1 1 280px;
+    min-width: 220px;
     max-width: 420px;
 }
 
